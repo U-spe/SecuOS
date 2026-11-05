@@ -1,0 +1,243 @@
+
+.system-window {
+  position: absolute;
+  z-index: 30;
+  top: 50%;
+  left: 50%;
+  width: min(850px, calc(100vw - 36px));
+  height: min(570px, calc(100vh - 100px));
+  transform: translate(-50%, -50%);
+  overflow: hidden;
+  background: var(--panel-solid);
+  color: var(--desktop-text);
+  border: 1px solid var(--panel-border);
+  border-radius: 13px;
+  box-shadow: 0 25px 90px rgba(0,0,0,.4);
+}
+
+.system-window.maximized {
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: calc(100% - var(--taskbar-height));
+  transform: none;
+  border-radius: 0;
+}
+
+.window-titlebar {
+  height: 43px;
+  padding: 0 10px 0 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(128,128,128,.08);
+  border-bottom: 1px solid var(--panel-border);
+  cursor: grab;
+}
+
+.window-titlebar:active { cursor: grabbing; }
+
+.window-title {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 13px;
+}
+
+.window-controls { display: flex; height: 100%; }
+.window-controls button {
+  width: 42px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+}
+
+.window-controls button:hover { background: rgba(128,128,128,.2); }
+.window-controls button:last-child:hover { background: #d94141; color: white; }
+
+.settings-content {
+  height: calc(100% - 43px);
+  display: grid;
+  grid-template-columns: 220px minmax(0,1fr);
+  overflow: hidden;
+}
+
+.settings-sidebar {
+  padding: 17px 12px;
+  background: rgba(128,128,128,.07);
+  border-right: 1px solid var(--panel-border);
+}
+
+.settings-profile {
+  padding: 8px 5px 22px;
+  margin-bottom: 10px;
+}
+
+.settings-profile img { width: 40px; height: 40px; }
+.settings-profile div { display: flex; flex-direction: column; gap: 3px; }
+.settings-profile strong { font-size: 13px; }
+.settings-profile span { font-size: 11px; opacity: .65; }
+
+.settings-nav {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 11px 10px;
+  margin-bottom: 4px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  font-size: 13px;
+}
+
+.settings-nav:hover, .settings-nav.active {
+  background: rgba(128,128,128,.18);
+}
+
+.settings-nav.active { box-shadow: inset 3px 0 var(--accent); }
+.settings-nav i { font-size: 17px; }
+
+.settings-main {
+  padding: 28px;
+  overflow-y: auto;
+}
+
+.settings-page { display: none; }
+.settings-page.active { display: block; }
+
+.settings-page h2 {
+  margin: 0 0 8px;
+  font-size: 25px;
+}
+
+.settings-page > p {
+  color: var(--desktop-muted);
+  font-size: 13px;
+  margin-bottom: 26px;
+}
+
+.settings-page h3 {
+  margin: 25px 0 12px;
+  font-size: 14px;
+}
+
+.os-picker {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.os-choice {
+  min-height: 82px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: rgba(128,128,128,.1);
+  border: 1px solid var(--panel-border);
+  border-radius: 9px;
+  color: inherit;
+  font-size: 12px;
+}
+
+.os-choice i { font-size: 26px; }
+.os-choice.active { border: 2px solid var(--accent); }
+
+.theme-picker { display: flex; gap: 8px; }
+.theme-picker button, .primary-button {
+  border: 1px solid var(--panel-border);
+  border-radius: 7px;
+  padding: 9px 15px;
+  background: rgba(128,128,128,.12);
+  color: inherit;
+}
+
+.primary-button {
+  margin-top: 15px;
+  background: var(--accent);
+  color: white;
+  border: 0;
+}
+
+.wallpaper-picker {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0,1fr));
+  gap: 10px;
+}
+
+.wallpaper-picker button {
+  padding: 5px;
+  border: 1px solid var(--panel-border);
+  border-radius: 8px;
+  background: rgba(128,128,128,.1);
+  color: inherit;
+}
+
+.wallpaper-picker img {
+  display: block;
+  width: 100%;
+  height: 75px;
+  object-fit: cover;
+  border-radius: 5px;
+  background: linear-gradient(135deg,#273957,#14151b);
+}
+
+.wallpaper-picker span {
+  display: block;
+  padding: 7px 2px 3px;
+  font-size: 11px;
+}
+
+.upload-wallpaper {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 10px 14px;
+  background: rgba(128,128,128,.12);
+  border-radius: 8px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.upload-wallpaper input { display: none; }
+
+.settings-page label:not(.upload-wallpaper) {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 18px 0;
+  font-size: 13px;
+}
+
+.settings-page label input[type="text"] {
+  max-width: 400px;
+  padding: 10px;
+  border: 1px solid var(--panel-border);
+  border-radius: 7px;
+  background: rgba(128,128,128,.1);
+  color: inherit;
+}
+
+.settings-page .setting-switch {
+  flex-direction: row !important;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 450px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--panel-border);
+}
+
+.about-logo {
+  width: 70px;
+  height: 70px;
+  display: grid;
+  place-items: center;
+  background: rgba(128,128,128,.15);
+  border-radius: 18px;
+  font-size: 38px;
+}
