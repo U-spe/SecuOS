@@ -1,355 +1,392 @@
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-os="windows">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#09090d">
+  <meta name="theme-color" content="#101114">
   <title>SecuOS</title>
 
-  <link rel="stylesheet" href="/css/setup.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&family=Nunito:wght@400;600;700;800&family=Orbitron:wght@400;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css">
+  <link rel="stylesheet" href="/css/desktop.css">
+  <link rel="stylesheet" href="/css/windows.css">
+  <link rel="stylesheet" href="/css/macos.css">
+  <link rel="stylesheet" href="/css/chromeos.css">
+  <link rel="stylesheet" href="/css/window-manager.css">
+  <link rel="stylesheet" href="/css/responsive.css">
 </head>
 
 <body>
-  <div class="ambient ambient-one"></div>
-  <div class="ambient ambient-two"></div>
+  <div id="desktop" class="desktop">
 
-  <main class="setup-container">
+    <!-- WALLPAPER -->
+    <div class="wallpaper"></div>
+    <div class="desktop-shade"></div>
 
-    <header class="topbar">
-      <div class="brand">
-        <div class="brand-icon">S</div>
-        <span>Secu<span class="brand-highlight">OS</span></span>
+    <!-- WINDOWS 11 DESKTOP -->
+    <section class="desktop-layer windows-layer" aria-label="Windows desktop">
+
+      <div class="desktop-shortcuts">
+        <button class="desktop-icon" data-icon="files">
+          <i class="ri-folder-3-fill"></i>
+          <span>Files</span>
+        </button>
+        <button class="desktop-icon" data-icon="computer">
+          <i class="ri-computer-line"></i>
+          <span>This PC</span>
+        </button>
+        <button class="desktop-icon" data-icon="trash">
+          <i class="ri-delete-bin-6-line"></i>
+          <span>Recycle Bin</span>
+        </button>
+        <button class="desktop-icon" data-action="settings">
+          <i class="ri-settings-3-fill"></i>
+          <span>Settings</span>
+        </button>
       </div>
-      <span class="version">PREVIEW 0.1</span>
-    </header>
 
-    <div class="progress-track">
-      <div class="progress-fill" id="progress"></div>
+      <div class="windows-taskbar">
+        <div class="taskbar-left">
+          <button class="weather-button" id="weatherButton">
+            <i class="ri-sun-line"></i>
+            <span>Weather</span>
+          </button>
+        </div>
+
+        <div class="taskbar-center">
+          <button class="taskbar-button windows-logo" id="startButton" aria-label="Start">
+            <i class="ri-windows-fill"></i>
+          </button>
+          <button class="taskbar-button" id="taskSearch" aria-label="Search">
+            <i class="ri-search-line"></i>
+          </button>
+          <button class="taskbar-button" aria-label="Task view">
+            <i class="ri-layout-grid-line"></i>
+          </button>
+          <button class="taskbar-button" aria-label="Files">
+            <i class="ri-folder-fill"></i>
+          </button>
+          <button class="taskbar-button" aria-label="Settings" data-action="settings">
+            <i class="ri-settings-3-line"></i>
+          </button>
+        </div>
+
+        <div class="taskbar-right">
+          <button class="tray-button" id="windowsTrayButton">
+            <i class="ri-wifi-line"></i>
+            <i class="ri-volume-up-line"></i>
+            <i class="ri-battery-2-charge-line"></i>
+          </button>
+          <button class="clock-button" id="windowsClock">
+            <span class="clock-time"></span>
+            <span class="clock-date"></span>
+          </button>
+          <button class="show-desktop-button" aria-label="Show desktop"></button>
+        </div>
+      </div>
+
+      <div class="start-menu floating-panel" id="startMenu">
+        <div class="start-search">
+          <i class="ri-search-line"></i>
+          <input type="search" placeholder="Search for anything">
+        </div>
+        <div class="start-section-heading">
+          <strong>Pinned</strong>
+          <button>All apps <i class="ri-arrow-right-s-line"></i></button>
+        </div>
+        <div class="pinned-grid">
+          <div><i class="ri-folder-3-fill"></i><span>Files</span></div>
+          <div><i class="ri-settings-3-fill"></i><span>Settings</span></div>
+          <div><i class="ri-calendar-line"></i><span>Calendar</span></div>
+          <div><i class="ri-image-line"></i><span>Photos</span></div>
+          <div><i class="ri-sticky-note-line"></i><span>Notepad</span></div>
+          <div><i class="ri-apps-line"></i><span>Apps</span></div>
+        </div>
+        <div class="start-bottom">
+          <div class="profile-small">
+            <img src="/assets/graphics/avatars/default.png" alt="">
+            <span class="profile-name">User</span>
+          </div>
+          <button id="powerButton" aria-label="Power options">
+            <i class="ri-shut-down-line"></i>
+          </button>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- macOS DESKTOP -->
+    <section class="desktop-layer macos-layer" aria-label="macOS desktop">
+
+      <div class="mac-menubar">
+        <div class="mac-menu-left">
+          <button class="apple-button" id="appleMenuButton">
+            <i class="ri-apple-fill"></i>
+          </button>
+          <strong>SecuOS</strong>
+          <button>File</button>
+          <button>Edit</button>
+          <button>View</button>
+          <button>Window</button>
+          <button>Help</button>
+        </div>
+        <div class="mac-menu-right">
+          <i class="ri-wifi-line"></i>
+          <i class="ri-bluetooth-line"></i>
+          <i class="ri-battery-2-charge-line"></i>
+          <button id="macControlButton"><i class="ri-toggle-line"></i></button>
+          <button id="macClock"><span class="clock-time"></span></button>
+        </div>
+      </div>
+
+      <div class="mac-shortcuts">
+        <button class="desktop-icon"><i class="ri-hard-drive-2-line"></i><span>Macintosh HD</span></button>
+        <button class="desktop-icon"><i class="ri-folder-3-fill"></i><span>Documents</span></button>
+        <button class="desktop-icon"><i class="ri-delete-bin-line"></i><span>Trash</span></button>
+      </div>
+
+      <div class="mac-dock-container">
+        <div class="mac-dock">
+          <button class="dock-icon" aria-label="Finder"><i class="ri-folder-open-fill"></i></button>
+          <button class="dock-icon" aria-label="Launchpad"><i class="ri-apps-2-fill"></i></button>
+          <button class="dock-icon" aria-label="Settings" data-action="settings"><i class="ri-settings-3-fill"></i></button>
+          <div class="dock-divider"></div>
+          <button class="dock-icon" aria-label="Calendar"><i class="ri-calendar-2-fill"></i></button>
+          <button class="dock-icon" aria-label="Photos"><i class="ri-image-fill"></i></button>
+          <button class="dock-icon" aria-label="Notes"><i class="ri-sticky-note-fill"></i></button>
+          <div class="dock-divider"></div>
+          <button class="dock-icon" aria-label="Trash"><i class="ri-delete-bin-line"></i></button>
+        </div>
+      </div>
+
+      <div class="apple-menu floating-panel" id="appleMenu">
+        <button>About This Mac</button>
+        <button data-action="settings">System Settings</button>
+        <hr>
+        <button>Sleep</button>
+        <button>Restart</button>
+        <button>Shut Down</button>
+      </div>
+    </section>
+
+    <!-- CHROMEOS DESKTOP -->
+    <section class="desktop-layer chrome-layer" aria-label="ChromeOS desktop">
+
+      <div class="chrome-shortcuts">
+        <button class="desktop-icon"><i class="ri-folder-3-fill"></i><span>My files</span></button>
+        <button class="desktop-icon"><i class="ri-image-line"></i><span>Gallery</span></button>
+        <button class="desktop-icon" data-action="settings"><i class="ri-settings-3-line"></i><span>Settings</span></button>
+      </div>
+
+      <div class="chrome-shelf">
+        <button class="shelf-launcher" id="launcherButton" aria-label="Launcher">
+          <i class="ri-circle-fill"></i>
+        </button>
+        <div class="shelf-apps">
+          <button><i class="ri-folder-fill"></i></button>
+          <button><i class="ri-calendar-line"></i></button>
+          <button><i class="ri-image-line"></i></button>
+          <button data-action="settings"><i class="ri-settings-3-line"></i></button>
+        </div>
+        <div class="shelf-status">
+          <button id="chromeStatusButton">
+            <i class="ri-wifi-line"></i>
+            <i class="ri-battery-2-charge-line"></i>
+            <span class="clock-time"></span>
+          </button>
+        </div>
+      </div>
+
+      <div class="chrome-launcher floating-panel" id="chromeLauncher">
+        <div class="launcher-search">
+          <i class="ri-search-line"></i>
+          <input type="search" placeholder="Search your device">
+        </div>
+        <div class="launcher-grid">
+          <div><i class="ri-folder-fill"></i><span>Files</span></div>
+          <div><i class="ri-settings-3-fill"></i><span>Settings</span></div>
+          <div><i class="ri-calendar-line"></i><span>Calendar</span></div>
+          <div><i class="ri-image-line"></i><span>Gallery</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SHARED SYSTEM PANELS -->
+    <div class="quick-settings floating-panel" id="quickSettings">
+      <div class="quick-top">
+        <strong>Quick Settings</strong>
+        <button id="quickSettingsClose"><i class="ri-close-line"></i></button>
+      </div>
+      <div class="quick-toggles">
+        <button class="quick-toggle active"><i class="ri-wifi-line"></i><span>Wi-Fi</span></button>
+        <button class="quick-toggle"><i class="ri-bluetooth-line"></i><span>Bluetooth</span></button>
+        <button class="quick-toggle"><i class="ri-moon-line"></i><span>Night Light</span></button>
+        <button class="quick-toggle"><i class="ri-plane-line"></i><span>Airplane</span></button>
+      </div>
+      <div class="quick-slider">
+        <i class="ri-sun-line"></i>
+        <input type="range" min="10" max="100" value="80" aria-label="Brightness">
+      </div>
+      <div class="quick-slider">
+        <i class="ri-volume-up-line"></i>
+        <input type="range" min="0" max="100" value="65" aria-label="Volume">
+      </div>
+      <button class="quick-settings-link" data-action="settings">
+        <i class="ri-settings-3-line"></i> Open Settings
+      </button>
     </div>
 
-    <!-- WELCOME -->
+    <!-- NOTIFICATIONS -->
+    <div class="notification-panel floating-panel" id="notificationPanel">
+      <div class="panel-heading">
+        <strong>Notifications</strong>
+        <button id="clearNotifications">Clear all</button>
+      </div>
+      <div class="notification-empty">
+        <i class="ri-notification-off-line"></i>
+        <strong>You're all caught up</strong>
+        <span>No new notifications</span>
+      </div>
+    </div>
 
-    <section class="setup-screen active" data-step="welcome">
-      <div class="welcome-content">
-        <div class="eyebrow">
-          <span class="status-dot"></span>
-          YOUR NEW DIGITAL SPACE
+    <!-- SETTINGS WINDOW -->
+    <div class="system-window" id="settingsWindow" hidden>
+      <div class="window-titlebar" data-drag-handle>
+        <div class="window-title">
+          <i class="ri-settings-3-line"></i>
+          <span>Settings</span>
         </div>
+        <div class="window-controls">
+          <button data-window-minimize><i class="ri-subtract-line"></i></button>
+          <button data-window-maximize><i class="ri-checkbox-blank-line"></i></button>
+          <button data-window-close><i class="ri-close-line"></i></button>
+        </div>
+      </div>
 
-        <h1>
-          Welcome<br>
-          <span class="gradient-text">to SecuOS.</span>
-        </h1>
-
-        <p class="subtitle">
-          A whole new experience. Your desktop, your rules.
-          Let's make this yours.
-        </p>
-
-        <div class="welcome-preview">
-          <div class="preview-window">
-            <div class="preview-top">
-              <span></span><span></span><span></span>
-              <div>SecuOS Desktop</div>
-            </div>
-            <div class="preview-content">
-              <div class="preview-sidebar">
-                <div class="preview-active"></div>
-                <div></div><div></div><div></div>
-              </div>
-              <div class="preview-main">
-                <div class="preview-heading"></div>
-                <div class="preview-cards">
-                  <div></div><div></div><div></div>
-                </div>
-              </div>
-            </div>
+      <div class="settings-content">
+        <aside class="settings-sidebar">
+          <div class="settings-profile">
+            <img src="/assets/graphics/avatars/default.png" alt="">
+            <div><strong class="profile-name">User</strong><span>Local profile</span></div>
           </div>
-        </div>
+          <button class="settings-nav active" data-settings-page="appearance"><i class="ri-palette-line"></i> Appearance</button>
+          <button class="settings-nav" data-settings-page="personalization"><i class="ri-user-line"></i> Personalization</button>
+          <button class="settings-nav" data-settings-page="system"><i class="ri-computer-line"></i> System</button>
+          <button class="settings-nav" data-settings-page="about"><i class="ri-information-line"></i> About SecuOS</button>
+        </aside>
 
-        <button class="primary-btn" data-next>
-          Get Started <span>→</span>
-        </button>
-      </div>
-    </section>
+        <div class="settings-main">
+          <section class="settings-page active" data-page="appearance">
+            <h2>Appearance</h2>
+            <p>Make your desktop feel like home.</p>
 
-    <!-- OS SELECTION -->
-
-    <section class="setup-screen" data-step="os">
-      <div class="eyebrow">STEP 01 / PERSONALIZATION</div>
-      <h2>Choose your OS.</h2>
-      <p class="subtitle">
-        Pick the interface style you want SecuOS to use.
-        You can change this later.
-      </p>
-
-      <div class="os-grid">
-        <button class="os-card selected" data-os="chrome">
-          <div class="os-symbol chrome-symbol">◉</div>
-          <h3>ChromeOS</h3>
-          <p>Clean, simple, minimal.</p>
-          <span class="selection-mark">✓</span>
-        </button>
-
-        <button class="os-card" data-os="windows">
-          <div class="os-symbol windows-symbol">⊞</div>
-          <h3>Windows</h3>
-          <p>Modern and familiar.</p>
-          <span class="selection-mark">✓</span>
-        </button>
-
-        <button class="os-card" data-os="mac">
-          <div class="os-symbol mac-symbol">●</div>
-          <h3>macOS</h3>
-          <p>Sleek and elegant.</p>
-          <span class="selection-mark">✓</span>
-        </button>
-      </div>
-
-      <div class="navigation">
-        <button class="secondary-btn" data-back>Back</button>
-        <button class="primary-btn" data-next>Continue →</button>
-      </div>
-    </section>
-
-    <!-- THEMES -->
-
-    <section class="setup-screen" data-step="theme">
-      <div class="eyebrow">STEP 02 / MAKE IT YOURS</div>
-      <h2>Set the vibe.</h2>
-      <p class="subtitle">
-        Customize the way your SecuOS looks and feels.
-      </p>
-
-      <div class="setting-group">
-        <h3>Appearance</h3>
-        <div class="mode-grid">
-          <button class="mode-card selected" data-mode="dark">
-            <div class="mode-preview dark-preview"></div>
-            <span>Night Mode</span>
-          </button>
-          <button class="mode-card" data-mode="light">
-            <div class="mode-preview light-preview"></div>
-            <span>Day Mode</span>
-          </button>
-        </div>
-      </div>
-
-      <div class="setting-group">
-        <h3>Accent Color</h3>
-        <div class="color-row">
-          <button class="color-swatch selected" data-color="#7257ff" style="--swatch:#7257ff"></button>
-          <button class="color-swatch" data-color="#388bff" style="--swatch:#388bff"></button>
-          <button class="color-swatch" data-color="#13b98a" style="--swatch:#13b98a"></button>
-          <button class="color-swatch" data-color="#ff6584" style="--swatch:#ff6584"></button>
-          <button class="color-swatch" data-color="#f2a93b" style="--swatch:#f2a93b"></button>
-          <label class="custom-color">
-            <input type="color" id="customColor" value="#7257ff">
-            <span>+</span>
-          </label>
-        </div>
-      </div>
-
-      <div class="setting-group">
-        <h3>Background</h3>
-        <div class="wallpaper-grid">
-          <button class="wallpaper selected" data-wallpaper="nebula">
-            <div class="wallpaper-art nebula"></div>
-            <span>Nebula</span>
-          </button>
-          <button class="wallpaper" data-wallpaper="midnight">
-            <div class="wallpaper-art midnight"></div>
-            <span>Midnight</span>
-          </button>
-          <button class="wallpaper" data-wallpaper="aurora">
-            <div class="wallpaper-art aurora"></div>
-            <span>Aurora</span>
-          </button>
-          <button class="wallpaper" data-wallpaper="sunset">
-            <div class="wallpaper-art sunset"></div>
-            <span>Sunset</span>
-          </button>
-        </div>
-
-        <label class="upload-button">
-          <input type="file" id="wallpaperUpload" accept="image/*">
-          <span>＋ Upload your own background</span>
-        </label>
-
-        <p class="helper-text" id="uploadStatus">
-          Images are stored locally in this browser.
-        </p>
-      </div>
-
-      <div class="setting-group">
-        <h3>Typography</h3>
-        <select id="fontSelect" class="styled-select">
-          <option value="space">Space Grotesk</option>
-          <option value="inter">Inter</option>
-          <option value="nunito">Nunito</option>
-          <option value="orbitron">Orbitron</option>
-          <option value="mono">JetBrains Mono</option>
-          <option value="system">System Default</option>
-        </select>
-      </div>
-
-      <div class="setting-group">
-        <h3>Presets</h3>
-        <div class="preset-grid">
-          <button class="preset-card" data-preset="ubg">
-            <span class="preset-icon">◈</span>
-            <strong>UBG Vibes</strong>
-            <small>Dark / Purple / Space</small>
-          </button>
-          <button class="preset-card" data-preset="minimal">
-            <span class="preset-icon">◻</span>
-            <strong>Minimal</strong>
-            <small>Light / Blue / Inter</small>
-          </button>
-          <button class="preset-card" data-preset="neon">
-            <span class="preset-icon">✳</span>
-            <strong>Neon</strong>
-            <small>Dark / Green / Orbitron</small>
-          </button>
-          <button class="preset-card" data-preset="classic">
-            <span class="preset-icon">▦</span>
-            <strong>Classic</strong>
-            <small>Dark / Blue / Nunito</small>
-          </button>
-        </div>
-      </div>
-
-      <div class="navigation">
-        <button class="secondary-btn" data-back>Back</button>
-        <button class="primary-btn" data-next>Continue →</button>
-      </div>
-    </section>
-
-    <!-- PROFILE -->
-
-    <section class="setup-screen" data-step="profile">
-      <div class="eyebrow">STEP 03 / YOUR PROFILE</div>
-      <h2>Who's using SecuOS?</h2>
-      <p class="subtitle">
-        Let's create your local profile.
-      </p>
-
-      <div class="profile-avatar" id="avatarPreview">S</div>
-
-      <div class="form-group">
-        <label for="displayName">Display Name</label>
-        <input id="displayName" type="text"
-          placeholder="What should we call you?" maxlength="32">
-      </div>
-
-      <div class="form-group">
-        <label for="username">Username</label>
-        <div class="input-prefix">
-          <span>@</span>
-          <input id="username" type="text"
-            placeholder="yourusername" maxlength="24">
-        </div>
-      </div>
-
-      <div class="security-note">
-        <span>◆</span>
-        <div>
-          <strong>Keep your information private.</strong>
-          <p>This preview creates a local profile only.
-          Never enter a real password here. Secure account
-          authentication will be added separately.</p>
-        </div>
-      </div>
-
-      <div class="navigation">
-        <button class="secondary-btn" data-back>Back</button>
-        <button class="primary-btn" id="finishSetup">
-          Finish Setup →
-        </button>
-      </div>
-      <p class="error-message" id="profileError"></p>
-    </section>
-
-    <!-- COMPLETE / DESKTOP -->
-
-    <section class="setup-screen" data-step="complete">
-      <div class="complete-content">
-        <div class="complete-icon">✓</div>
-        <div class="eyebrow">SETUP COMPLETE</div>
-        <h1>You're all set.</h1>
-        <p class="subtitle">
-          Welcome to your new digital home,
-          <strong id="completedName">User</strong>.
-        </p>
-
-        <div class="desktop-preview">
-          <div class="desktop-preview-top">
-            <span>SecuOS</span>
-            <span id="completedOS">ChromeOS</span>
-          </div>
-          <div class="desktop-preview-body">
-            <div class="desktop-preview-icons">
-              <span>▣</span><span>♫</span><span>◎</span>
+            <h3>Desktop style</h3>
+            <div class="os-picker">
+              <button data-set-os="windows" class="os-choice active">
+                <i class="ri-windows-fill"></i><span>Windows 11</span>
+              </button>
+              <button data-set-os="macos" class="os-choice">
+                <i class="ri-apple-fill"></i><span>macOS</span>
+              </button>
+              <button data-set-os="chrome" class="os-choice">
+                <i class="ri-chrome-fill"></i><span>ChromeOS</span>
+              </button>
             </div>
-            <div class="desktop-preview-welcome">
-              Your desktop awaits.
+
+            <h3>Theme</h3>
+            <div class="theme-picker">
+              <button data-theme="dark">Dark</button>
+              <button data-theme="light">Light</button>
+              <button data-theme="system">System</button>
             </div>
-          </div>
-          <div class="desktop-preview-dock">
-            <span>▦</span><span>◉</span><span>♫</span><span>⚙</span>
-          </div>
-        </div>
 
-        <button class="primary-btn" id="enterDesktop">
-          Enter SecuOS →
-        </button>
+            <h3>Accent color</h3>
+            <input type="color" id="accentPicker" value="#6688ff">
+
+            <h3>Wallpaper</h3>
+            <div class="wallpaper-picker">
+              <button data-wallpaper="/assets/graphics/wallpapers/default.jpg">
+                <img src="/assets/graphics/wallpapers/default.jpg" alt="Default wallpaper">
+                <span>Default</span>
+              </button>
+              <button data-wallpaper="/assets/graphics/wallpapers/dark.jpg">
+                <img src="/assets/graphics/wallpapers/dark.jpg" alt="Dark wallpaper">
+                <span>Dark</span>
+              </button>
+              <button data-wallpaper="/assets/graphics/wallpapers/abstract.jpg">
+                <img src="/assets/graphics/wallpapers/abstract.jpg" alt="Abstract wallpaper">
+                <span>Abstract</span>
+              </button>
+            </div>
+            <label class="upload-wallpaper">
+              <i class="ri-upload-2-line"></i> Choose local wallpaper
+              <input type="file" id="wallpaperUpload" accept="image/*">
+            </label>
+          </section>
+
+          <section class="settings-page" data-page="personalization">
+            <h2>Personalization</h2>
+            <p>Customize your local desktop profile.</p>
+            <label>Display name<input type="text" id="displayNameInput" maxlength="30" placeholder="User"></label>
+            <label>Username<input type="text" id="usernameInput" maxlength="24" placeholder="user"></label>
+            <button class="primary-button" id="saveProfile">Save profile</button>
+          </section>
+
+          <section class="settings-page" data-page="system">
+            <h2>System</h2>
+            <p>Basic desktop preferences.</p>
+            <label class="setting-switch">
+              <span>Show desktop icons</span>
+              <input type="checkbox" id="desktopIconsToggle" checked>
+            </label>
+            <label class="setting-switch">
+              <span>Reduce transparency</span>
+              <input type="checkbox" id="transparencyToggle">
+            </label>
+            <label class="setting-switch">
+              <span>Show seconds in clock</span>
+              <input type="checkbox" id="secondsToggle">
+            </label>
+          </section>
+
+          <section class="settings-page" data-page="about">
+            <h2>About SecuOS</h2>
+            <div class="about-logo"><i class="ri-computer-line"></i></div>
+            <h3>SecuOS</h3>
+            <p>Smaller shell. Bigger possibilities.</p>
+            <p>Version 1.0.0</p>
+            <p>Browser-based desktop environment.</p>
+          </section>
+        </div>
       </div>
-    </section>
+    </div>
 
-    <!-- INITIAL DESKTOP PLACEHOLDER -->
+    <!-- CONTEXT MENU -->
+    <div class="desktop-context floating-panel" id="desktopContext">
+      <button id="contextRefresh"><i class="ri-refresh-line"></i> Refresh</button>
+      <button id="contextSettings"><i class="ri-settings-3-line"></i> Personalize</button>
+      <button id="contextNotifications"><i class="ri-notification-line"></i> Notifications</button>
+    </div>
 
-    <section class="setup-screen" data-step="desktop">
-      <div class="eyebrow">SEC U OS / DESKTOP</div>
-      <h1>Hey, <span id="desktopName" class="gradient-text">User</span>.</h1>
-      <p class="subtitle">Your space. Your rules.</p>
+    <!-- POWER MENU -->
+    <div class="power-menu floating-panel" id="powerMenu">
+      <button><i class="ri-moon-line"></i> Sleep</button>
+      <button><i class="ri-restart-line"></i> Restart</button>
+      <button><i class="ri-shut-down-line"></i> Shut down</button>
+    </div>
 
-      <div class="app-grid">
-        <div class="app-card">
-          <span>🎮</span><strong>GFort</strong><small>Games</small>
-        </div>
-        <div class="app-card">
-          <span>♫</span><strong>Soundie</strong><small>Music</small>
-        </div>
-        <div class="app-card">
-          <span>◎</span><strong>InterWebz</strong><small>Browser</small>
-        </div>
-        <div class="app-card">
-          <span>▣</span><strong>Popcorner</strong><small>Movies & TV</small>
-        </div>
-        <div class="app-card">
-          <span>✳</span><strong>Scar</strong><small>AI Chat</small>
-        </div>
-        <div class="app-card">
-          <span>⚙</span><strong>Settings</strong><small>Preferences</small>
-        </div>
-      </div>
+    <div class="toast-container" id="toastContainer"></div>
+  </div>
 
-      <p class="helper-text">
-        Initial desktop preview. Apps are not connected yet.
-      </p>
-    </section>
-
-    <footer class="footer">
-      <span>SEC U OS</span>
-      <span>SMALLER LIMITS. BIGGER POSSIBILITIES.</span>
-    </footer>
-
-  </main>
-
-  <script src="/js/setup.js"></script>
+  <script src="/js/system-clock.js" defer></script>
+  <script src="/js/window-manager.js" defer></script>
+  <script src="/js/start-menu.js" defer></script>
+  <script src="/js/dock.js" defer></script>
+  <script src="/js/shelf.js" defer></script>
+  <script src="/js/quick-settings.js" defer></script>
+  <script src="/js/notifications.js" defer></script>
+  <script src="/js/desktop-context.js" defer></script>
+  <script src="/js/desktop-settings.js" defer></script>
+  <script src="/js/desktop.js" defer></script>
 </body>
 </html>
