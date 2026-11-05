@@ -1,0 +1,120 @@
+
+.chrome-layer {
+  font-family: "Google Sans", "Segoe UI", sans-serif;
+}
+
+.chrome-shortcuts {
+  top: 22px;
+  left: 20px;
+}
+
+.chrome-shelf {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 54px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(24,27,35,.72);
+  backdrop-filter: blur(24px);
+  border-top: 1px solid rgba(255,255,255,.12);
+}
+
+.shelf-launcher {
+  position: absolute;
+  left: 15px;
+  width: 38px;
+  height: 38px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: #8ab4f8;
+  font-size: 20px;
+}
+
+.shelf-launcher:hover { background: rgba(255,255,255,.12); }
+
+.shelf-apps {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.shelf-apps button {
+  width: 42px;
+  height: 42px;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  color: white;
+  font-size: 23px;
+}
+
+.shelf-apps button:hover { background: rgba(255,255,255,.14); }
+
+.shelf-status {
+  position: absolute;
+  right: 10px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.shelf-status button {
+  height: 38px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 18px;
+  background: rgba(255,255,255,.1);
+  color: white;
+  font-size: 12px;
+}
+
+.chrome-launcher {
+  left: 50%;
+  bottom: 65px;
+  transform: translateX(-50%);
+  width: min(570px, calc(100vw - 24px));
+  padding: 22px;
+}
+
+.launcher-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.launcher-grid > div {
+  min-height: 90px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  border-radius: 12px;
+  font-size: 12px;
+}
+
+.launcher-grid > div:hover { background: rgba(255,255,255,.1); }
+.launcher-grid i { font-size: 29px; color: var(--accent); }
+
+html[data-os="chrome"] .quick-settings {
+  right: 12px;
+  bottom: 65px;
+  width: 330px;
+  padding: 18px;
+}
+
+html[data-os="chrome"] .notification-panel {
+  right: 12px;
+  bottom: 65px;
+  width: 330px;
+  min-height: 240px;
+  padding: 18px;
+}
