@@ -1,0 +1,355 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#09090d">
+  <title>SecuOS</title>
+
+  <link rel="stylesheet" href="/css/setup.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&family=Nunito:wght@400;600;700;800&family=Orbitron:wght@400;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+  <div class="ambient ambient-one"></div>
+  <div class="ambient ambient-two"></div>
+
+  <main class="setup-container">
+
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-icon">S</div>
+        <span>Secu<span class="brand-highlight">OS</span></span>
+      </div>
+      <span class="version">PREVIEW 0.1</span>
+    </header>
+
+    <div class="progress-track">
+      <div class="progress-fill" id="progress"></div>
+    </div>
+
+    <!-- WELCOME -->
+
+    <section class="setup-screen active" data-step="welcome">
+      <div class="welcome-content">
+        <div class="eyebrow">
+          <span class="status-dot"></span>
+          YOUR NEW DIGITAL SPACE
+        </div>
+
+        <h1>
+          Welcome<br>
+          <span class="gradient-text">to SecuOS.</span>
+        </h1>
+
+        <p class="subtitle">
+          A whole new experience. Your desktop, your rules.
+          Let's make this yours.
+        </p>
+
+        <div class="welcome-preview">
+          <div class="preview-window">
+            <div class="preview-top">
+              <span></span><span></span><span></span>
+              <div>SecuOS Desktop</div>
+            </div>
+            <div class="preview-content">
+              <div class="preview-sidebar">
+                <div class="preview-active"></div>
+                <div></div><div></div><div></div>
+              </div>
+              <div class="preview-main">
+                <div class="preview-heading"></div>
+                <div class="preview-cards">
+                  <div></div><div></div><div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button class="primary-btn" data-next>
+          Get Started <span>→</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- OS SELECTION -->
+
+    <section class="setup-screen" data-step="os">
+      <div class="eyebrow">STEP 01 / PERSONALIZATION</div>
+      <h2>Choose your OS.</h2>
+      <p class="subtitle">
+        Pick the interface style you want SecuOS to use.
+        You can change this later.
+      </p>
+
+      <div class="os-grid">
+        <button class="os-card selected" data-os="chrome">
+          <div class="os-symbol chrome-symbol">◉</div>
+          <h3>ChromeOS</h3>
+          <p>Clean, simple, minimal.</p>
+          <span class="selection-mark">✓</span>
+        </button>
+
+        <button class="os-card" data-os="windows">
+          <div class="os-symbol windows-symbol">⊞</div>
+          <h3>Windows</h3>
+          <p>Modern and familiar.</p>
+          <span class="selection-mark">✓</span>
+        </button>
+
+        <button class="os-card" data-os="mac">
+          <div class="os-symbol mac-symbol">●</div>
+          <h3>macOS</h3>
+          <p>Sleek and elegant.</p>
+          <span class="selection-mark">✓</span>
+        </button>
+      </div>
+
+      <div class="navigation">
+        <button class="secondary-btn" data-back>Back</button>
+        <button class="primary-btn" data-next>Continue →</button>
+      </div>
+    </section>
+
+    <!-- THEMES -->
+
+    <section class="setup-screen" data-step="theme">
+      <div class="eyebrow">STEP 02 / MAKE IT YOURS</div>
+      <h2>Set the vibe.</h2>
+      <p class="subtitle">
+        Customize the way your SecuOS looks and feels.
+      </p>
+
+      <div class="setting-group">
+        <h3>Appearance</h3>
+        <div class="mode-grid">
+          <button class="mode-card selected" data-mode="dark">
+            <div class="mode-preview dark-preview"></div>
+            <span>Night Mode</span>
+          </button>
+          <button class="mode-card" data-mode="light">
+            <div class="mode-preview light-preview"></div>
+            <span>Day Mode</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="setting-group">
+        <h3>Accent Color</h3>
+        <div class="color-row">
+          <button class="color-swatch selected" data-color="#7257ff" style="--swatch:#7257ff"></button>
+          <button class="color-swatch" data-color="#388bff" style="--swatch:#388bff"></button>
+          <button class="color-swatch" data-color="#13b98a" style="--swatch:#13b98a"></button>
+          <button class="color-swatch" data-color="#ff6584" style="--swatch:#ff6584"></button>
+          <button class="color-swatch" data-color="#f2a93b" style="--swatch:#f2a93b"></button>
+          <label class="custom-color">
+            <input type="color" id="customColor" value="#7257ff">
+            <span>+</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="setting-group">
+        <h3>Background</h3>
+        <div class="wallpaper-grid">
+          <button class="wallpaper selected" data-wallpaper="nebula">
+            <div class="wallpaper-art nebula"></div>
+            <span>Nebula</span>
+          </button>
+          <button class="wallpaper" data-wallpaper="midnight">
+            <div class="wallpaper-art midnight"></div>
+            <span>Midnight</span>
+          </button>
+          <button class="wallpaper" data-wallpaper="aurora">
+            <div class="wallpaper-art aurora"></div>
+            <span>Aurora</span>
+          </button>
+          <button class="wallpaper" data-wallpaper="sunset">
+            <div class="wallpaper-art sunset"></div>
+            <span>Sunset</span>
+          </button>
+        </div>
+
+        <label class="upload-button">
+          <input type="file" id="wallpaperUpload" accept="image/*">
+          <span>＋ Upload your own background</span>
+        </label>
+
+        <p class="helper-text" id="uploadStatus">
+          Images are stored locally in this browser.
+        </p>
+      </div>
+
+      <div class="setting-group">
+        <h3>Typography</h3>
+        <select id="fontSelect" class="styled-select">
+          <option value="space">Space Grotesk</option>
+          <option value="inter">Inter</option>
+          <option value="nunito">Nunito</option>
+          <option value="orbitron">Orbitron</option>
+          <option value="mono">JetBrains Mono</option>
+          <option value="system">System Default</option>
+        </select>
+      </div>
+
+      <div class="setting-group">
+        <h3>Presets</h3>
+        <div class="preset-grid">
+          <button class="preset-card" data-preset="ubg">
+            <span class="preset-icon">◈</span>
+            <strong>UBG Vibes</strong>
+            <small>Dark / Purple / Space</small>
+          </button>
+          <button class="preset-card" data-preset="minimal">
+            <span class="preset-icon">◻</span>
+            <strong>Minimal</strong>
+            <small>Light / Blue / Inter</small>
+          </button>
+          <button class="preset-card" data-preset="neon">
+            <span class="preset-icon">✳</span>
+            <strong>Neon</strong>
+            <small>Dark / Green / Orbitron</small>
+          </button>
+          <button class="preset-card" data-preset="classic">
+            <span class="preset-icon">▦</span>
+            <strong>Classic</strong>
+            <small>Dark / Blue / Nunito</small>
+          </button>
+        </div>
+      </div>
+
+      <div class="navigation">
+        <button class="secondary-btn" data-back>Back</button>
+        <button class="primary-btn" data-next>Continue →</button>
+      </div>
+    </section>
+
+    <!-- PROFILE -->
+
+    <section class="setup-screen" data-step="profile">
+      <div class="eyebrow">STEP 03 / YOUR PROFILE</div>
+      <h2>Who's using SecuOS?</h2>
+      <p class="subtitle">
+        Let's create your local profile.
+      </p>
+
+      <div class="profile-avatar" id="avatarPreview">S</div>
+
+      <div class="form-group">
+        <label for="displayName">Display Name</label>
+        <input id="displayName" type="text"
+          placeholder="What should we call you?" maxlength="32">
+      </div>
+
+      <div class="form-group">
+        <label for="username">Username</label>
+        <div class="input-prefix">
+          <span>@</span>
+          <input id="username" type="text"
+            placeholder="yourusername" maxlength="24">
+        </div>
+      </div>
+
+      <div class="security-note">
+        <span>◆</span>
+        <div>
+          <strong>Keep your information private.</strong>
+          <p>This preview creates a local profile only.
+          Never enter a real password here. Secure account
+          authentication will be added separately.</p>
+        </div>
+      </div>
+
+      <div class="navigation">
+        <button class="secondary-btn" data-back>Back</button>
+        <button class="primary-btn" id="finishSetup">
+          Finish Setup →
+        </button>
+      </div>
+      <p class="error-message" id="profileError"></p>
+    </section>
+
+    <!-- COMPLETE / DESKTOP -->
+
+    <section class="setup-screen" data-step="complete">
+      <div class="complete-content">
+        <div class="complete-icon">✓</div>
+        <div class="eyebrow">SETUP COMPLETE</div>
+        <h1>You're all set.</h1>
+        <p class="subtitle">
+          Welcome to your new digital home,
+          <strong id="completedName">User</strong>.
+        </p>
+
+        <div class="desktop-preview">
+          <div class="desktop-preview-top">
+            <span>SecuOS</span>
+            <span id="completedOS">ChromeOS</span>
+          </div>
+          <div class="desktop-preview-body">
+            <div class="desktop-preview-icons">
+              <span>▣</span><span>♫</span><span>◎</span>
+            </div>
+            <div class="desktop-preview-welcome">
+              Your desktop awaits.
+            </div>
+          </div>
+          <div class="desktop-preview-dock">
+            <span>▦</span><span>◉</span><span>♫</span><span>⚙</span>
+          </div>
+        </div>
+
+        <button class="primary-btn" id="enterDesktop">
+          Enter SecuOS →
+        </button>
+      </div>
+    </section>
+
+    <!-- INITIAL DESKTOP PLACEHOLDER -->
+
+    <section class="setup-screen" data-step="desktop">
+      <div class="eyebrow">SEC U OS / DESKTOP</div>
+      <h1>Hey, <span id="desktopName" class="gradient-text">User</span>.</h1>
+      <p class="subtitle">Your space. Your rules.</p>
+
+      <div class="app-grid">
+        <div class="app-card">
+          <span>🎮</span><strong>GFort</strong><small>Games</small>
+        </div>
+        <div class="app-card">
+          <span>♫</span><strong>Soundie</strong><small>Music</small>
+        </div>
+        <div class="app-card">
+          <span>◎</span><strong>InterWebz</strong><small>Browser</small>
+        </div>
+        <div class="app-card">
+          <span>▣</span><strong>Popcorner</strong><small>Movies & TV</small>
+        </div>
+        <div class="app-card">
+          <span>✳</span><strong>Scar</strong><small>AI Chat</small>
+        </div>
+        <div class="app-card">
+          <span>⚙</span><strong>Settings</strong><small>Preferences</small>
+        </div>
+      </div>
+
+      <p class="helper-text">
+        Initial desktop preview. Apps are not connected yet.
+      </p>
+    </section>
+
+    <footer class="footer">
+      <span>SEC U OS</span>
+      <span>SMALLER LIMITS. BIGGER POSSIBILITIES.</span>
+    </footer>
+
+  </main>
+
+  <script src="/js/setup.js"></script>
+</body>
+</html>
