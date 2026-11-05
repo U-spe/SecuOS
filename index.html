@@ -1,0 +1,258 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
+
+  <title>Login</title>
+
+  <link rel="apple-touch-icon" sizes="180x180"
+    href="https://cdn.classlink.com/production/launchpad/resources/images/favicon/apple-touch-icon.png">
+
+  <link rel="icon" type="image/png" sizes="32x32"
+    href="https://cdn.classlink.com/production/launchpad/resources/images/favicon/favicon-32x32.png">
+
+  <link rel="icon" type="image/png" sizes="16x16"
+    href="https://cdn.classlink.com/production/launchpad/resources/images/favicon/favicon-16x16.png">
+
+  <link rel="stylesheet"
+    href="https://cdn.classlink.com/production/launchpad/css/genericlogin/style.css">
+
+  <link rel="stylesheet"
+    href="https://cdn.classlink.com/beta/framework/stylesheets/clsheet.css">
+
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800">
+
+  <link rel="stylesheet"
+    href="https://cdn.classlink.com/production/public/libraries/fontawesome/css/all.min.css">
+
+  <style>
+    html,
+    body {
+      min-height: 100%;
+    }
+
+    body.lp-login-body {
+      min-height: 100vh;
+    }
+
+    .qc-button {
+      cursor: pointer;
+    }
+  </style>
+
+<iframe
+  id="bedrock-frame"
+  title="Bedrock"
+  allow="fullscreen"
+  allowfullscreen
+  hidden
+></iframe>
+
+<script src="/js/cloak-frame.js" defer></script>
+  
+</head>
+
+<body class="lp-login-body" data-bedrock-cloak="true">
+
+  <div id="toaster"></div>
+
+  <div class="lp-login-wrapper">
+
+    <div class="lp-login-content">
+
+      <!-- Left-side branding -->
+      <div class="lp-login-left-bar">
+
+        <div class="lp-login-top-logo-container">
+          <img
+            src="https://cdn.classlink.com/production/launchpad/img/genericlogin/ClassLink-Cloud-White.svg"
+            loading="lazy"
+            alt="ClassLink Logo"
+            class="lp-login-top-logo-image">
+
+          <div class="lp-login-top-logo-text">ClassLink</div>
+        </div>
+
+        <div class="bg-cloud-container">
+          <img
+            src="https://cdn.classlink.com/production/launchpad/img/genericlogin/cloud-bg.svg"
+            loading="lazy"
+            alt="Cloud background"
+            class="bg-cloud-image">
+        </div>
+
+      </div>
+
+      <!-- Main login-style area -->
+      <div class="lp-login-content-main">
+
+        <div class="lp-login-logo-mobile">
+          <img
+            src="https://cdn.classlink.com/production/launchpad/img/genericlogin/ClassLink-Cloud-White.svg"
+            loading="lazy"
+            width="110"
+            alt="ClassLink Logo"
+            class="lp-login-logo-mobile-image">
+
+          <div class="lp-login-logo-mobile-text">ClassLink</div>
+        </div>
+
+        <div class="search-box" id="generic_login">
+
+          <div class="lp-login-form-heading">
+
+            <div class="lp-login-form-header-text">
+              Find your login page
+            </div>
+
+            <!-- QuickCard is handled by /js/navigation.js -->
+            <a
+              href="/main.html"
+              class="button button-primary qc-button"
+              title="Use QuickCard"
+              id="quickcard-button"
+              data-bedrock-quickcard>
+
+              <i class="far fa-qrcode qr-icon"></i>
+              <span>Use QuickCard</span>
+
+            </a>
+
+          </div>
+
+          <div class="search-bar">
+
+            <input
+              type="text"
+              class="search-bar-input"
+              aria-label="Search for your login page"
+              placeholder="">
+
+            <i class="far fa-search fa-lg search-icon"></i>
+
+            <button class="close-dropdown" type="button" title="Close">
+              <i class="fa fa-times"></i>
+            </button>
+
+            <button
+              class="button-text label default use-location"
+              type="button"
+              title="Use my location">
+
+              <span class="label-icon">
+                <i class="fas fa-map-marker-alt fa-lg"></i>
+              </span>
+
+              <span>USE MY LOCATION</span>
+            </button>
+
+            <button
+              class="button-text label location stop-location"
+              type="button"
+              title="Stop using my location">
+
+              <span class="label-icon">
+                <i class="fas fa-map-marker-alt fa-lg"></i>
+              </span>
+
+              <span>STOP USING LOCATION</span>
+            </button>
+
+            <div class="search-dropdown default">
+              <div class="dropdown-list custom-scroll"></div>
+            </div>
+
+          </div>
+
+          <div class="unable-find-sch">
+            Can't find your login page?
+
+            <button class="btn-login" type="button">
+              <span>
+                <i class="fas fa-sign-in-alt"></i>
+              </span>
+
+              <span class="label-text">Login here</span>
+            </button>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Footer -->
+    <div class="lp-login-footer">
+
+      <div class="lp-login-footer-nav-container">
+
+        <div class="lp-login-footer-logo-container">
+
+          <img
+            src="https://cdn.classlink.com/production/launchpad/img/genericlogin/ClassLink-Cloud-White-OL_DS.svg"
+            loading="lazy"
+            alt=""
+            class="lp-login-footer-logo-container-image">
+
+          <div class="lp-login-footer-logo-container-text">
+            &copy; 2026
+          </div>
+
+        </div>
+
+        <div class="lp-login-footer-nav-buttons">
+
+          <a
+            href="https://www.classlink.com/privacy"
+            class="lp-login-footer-link">PRIVACY POLICY</a>
+
+          <a
+            href="https://www.classlink.com/help"
+            class="lp-login-footer-link">HELP</a>
+
+          <a
+            href="https://www.classlink.com/cdncheck"
+            class="lp-login-footer-link">BROWSER CHECK</a>
+
+          <a
+            href="https://launchpad.classlink.com/remotelogin"
+            class="lp-login-footer-link">REMOTE LOGIN</a>
+
+          <a
+            href="https://launchpad.classlink.com/login"
+            class="lp-login-footer-link">DIRECT LOGIN</a>
+
+        </div>
+
+      </div>
+
+      <div class="lp-login-footer-app-links">
+
+        <a href="https://apps.apple.com/us/app/classlink-launchpad/id524297631?platform=ipad">
+          <img
+            src="https://cdn.classlink.com/production/launchpad/img/genericlogin/app-store-badge.png"
+            loading="lazy"
+            alt="App Store"
+            class="lp-login-footer-app-links-1">
+        </a>
+
+        <a href="https://play.google.com/store/apps/details?id=com.classlink.launchpad.android&hl=en_US">
+          <img
+            src="https://cdn.classlink.com/production/launchpad/img/genericlogin/google-play-badge.png"
+            loading="lazy"
+            alt="Google Play"
+            class="lp-login-footer-app-links-2">
+        </a>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</body>
+</html>
