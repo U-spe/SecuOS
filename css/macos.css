@@ -1,0 +1,138 @@
+
+.macos-layer {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+}
+
+.mac-menubar {
+  position: absolute;
+  inset: 0 0 auto;
+  height: 30px;
+  padding: 0 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(30,30,34,.48);
+  backdrop-filter: blur(25px);
+  color: white;
+  font-size: 13px;
+  z-index: 5;
+}
+
+.mac-menu-left, .mac-menu-right {
+  display: flex;
+  align-items: center;
+  gap: 17px;
+  height: 100%;
+}
+
+.mac-menu-left button, .mac-menu-right button {
+  padding: 3px 5px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  border-radius: 5px;
+  font-size: 12px;
+}
+
+.mac-menu-left button:hover, .mac-menu-right button:hover {
+  background: rgba(255,255,255,.15);
+}
+
+.mac-menu-left strong { font-weight: 650; }
+.apple-button { font-size: 17px !important; }
+.mac-menu-right { gap: 12px; }
+.mac-menu-right > i { font-size: 14px; }
+
+.macos-layer .mac-shortcuts {
+  top: 50px;
+  right: 20px;
+  left: auto;
+  align-items: flex-end;
+}
+
+.macos-layer .desktop-icon {
+  width: 92px;
+  min-height: 90px;
+}
+
+.mac-dock-container {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 9px;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.mac-dock {
+  pointer-events: auto;
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  padding: 8px 12px;
+  border: 1px solid rgba(255,255,255,.24);
+  border-radius: 19px;
+  background: rgba(230,230,240,.2);
+  backdrop-filter: blur(30px) saturate(160%);
+  box-shadow: 0 8px 35px rgba(0,0,0,.28);
+}
+
+.dock-icon {
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 13px;
+  background: rgba(255,255,255,.12);
+  transition: transform .16s ease, background .16s ease;
+}
+
+.dock-icon i { font-size: 28px; }
+.dock-icon:hover {
+  transform: translateY(-8px) scale(1.12);
+  background: rgba(255,255,255,.25);
+}
+
+.dock-divider {
+  width: 1px;
+  height: 38px;
+  margin: 0 2px;
+  background: rgba(255,255,255,.3);
+}
+
+.apple-menu {
+  top: 34px;
+  left: 8px;
+  width: 220px;
+  padding: 7px;
+}
+
+.apple-menu button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  font-size: 13px;
+}
+
+.apple-menu hr {
+  border: 0;
+  border-top: 1px solid var(--panel-border);
+  margin: 5px 3px;
+}
+
+html[data-os="macos"] .quick-settings {
+  top: 38px;
+  right: 12px;
+  width: 320px;
+  padding: 18px;
+}
+
+html[data-os="macos"] .notification-panel {
+  top: 38px;
+  right: 12px;
+  width: 320px;
+  min-height: 240px;
+  padding: 18px;
+}
