@@ -1,10 +1,12 @@
 export type BootStage =
+    | "initializing"
     | "firmware"
     | "diagnostics"
     | "environment"
     | "profile-discovery"
-    | "login"
+    | "enter"
     | "setup"
+    | "login"
     | "welcome"
     | "desktop"
     | "locked"
@@ -33,8 +35,8 @@ export interface Diagnostic {
 
 export interface BootReport {
     startedAt: number;
-    completedAt?: number;
-    duration?: number;
+    completedAt: number | null;
+    duration: number | null;
     diagnostics: Diagnostic[];
     warnings: string[];
     errors: string[];
@@ -45,17 +47,19 @@ export interface BootProfile {
     username: string;
     passwordHash: string | null;
     passwordSalt: string | null;
-    createdAt: string;
     avatar: string;
+    createdAt: string;
 }
 
 export class BootKernel {
-    public stage: BootStage = "firmware";
+    public stage: BootStage = "initializing";
 
     public readonly config: BootConfig;
 
     public readonly report: BootReport = {
         startedAt: Date.now(),
+        completedAt: null,
+        duration: null,
         diagnostics: [],
         warnings: [],
         errors: []
@@ -125,7 +129,7 @@ export class BootKernel {
         this.report.duration =
             this.report.completedAt - this.report.startedAt;
 
-        return this.report;
+        return this.getReport();
     }
 
     public fail(message: string): void {
@@ -134,6 +138,8 @@ export class BootKernel {
     }
 
     public getReport(): BootReport {
-        return structuredClone(this.report);
+        return JSON.parse(
+            JSON.stringify(this.report)
+        ) as BootReport;
     }
 }
