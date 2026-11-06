@@ -6,7 +6,6 @@ from datetime import datetime, timezone
 
 def run_diagnostics():
     started = time.time()
-
     results = []
 
     def check(name, passed, detail, critical=False):
@@ -17,21 +16,20 @@ def run_diagnostics():
             "critical": bool(critical)
         })
 
-    # Python runtime
     check(
         "Python runtime",
         sys.version_info >= (3, 10),
         platform.python_version()
     )
 
-    # Browser environment
     try:
         from js import window, navigator, document
 
         check(
-            "Browser environment",
-            True,
-            navigator.userAgent
+            "Browser connection",
+            window is not None,
+            "Browser bridge available",
+            True
         )
 
         check(
@@ -41,36 +39,67 @@ def run_diagnostics():
             True
         )
 
+        width = int(window.innerWidth)
+        height = int(window.innerHeight)
+
         check(
-            "Display dimensions",
-            window.innerWidth > 0 and window.innerHeight > 0,
-            f"{window.innerWidth}x{window.innerHeight}"
+            "Display",
+            width > 0 and height > 0,
+            f"{width} x {height}"
         )
 
         check(
-            "Online connection",
+            "Internet connection",
             bool(navigator.onLine),
             "Online" if navigator.onLine else "Offline"
         )
 
         check(
-            "Reduced motion preference",
+            "Secure browser context",
+            bool(window.isSecureContext),
+            "HTTPS or localhost" if window.isSecureContext
+            else "Not a secure context"
+        )
+
+        check(
+            "Reduced motion",
             True,
             str(window.matchMedia(
                 "(prefers-reduced-motion: reduce)"
             ).matches)
         )
 
+        desktop = document.querySelector("#desktop")
+
         check(
-            "Secure context",
-            bool(window.isSecureContext),
-            "Secure context" if window.isSecureContext
-            else "Not a secure context"
+            "Desktop environment",
+            desktop is not None,
+            "Desktop element found" if desktop is not None
+            else "Missing #desktop element",
+            True
+        )
+
+        storage_available = False
+
+        try:
+            key = "__secuos_diagnostic_test__"
+            window.localStorage.setItem(key, "test")
+            window.localStorage.removeItem(key)
+            storage_available = True
+        except Exception:
+            storage_available = False
+
+        check(
+            "Local storage",
+            storage_available,
+            "Profile storage available" if storage_available
+            else "Browser storage unavailable",
+            True
         )
 
     except Exception as error:
         check(
-            "Browser bridge",
+            "Browser integration",
             False,
             str(error),
             True
@@ -81,7 +110,7 @@ def run_diagnostics():
     return {
         "system": "SecuOS",
         "component": "Python Diagnostics",
-        "runtime": platform.python_version(),
+        "python_version": platform.python_version(),
         "timestamp": datetime.now(
             timezone.utc
         ).isoformat(),
