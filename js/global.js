@@ -13,6 +13,7 @@
     "/js/desktop.js",
     "/js/file-system.js",
     "/js/system-experience.js",
+    "/js/app-bridge.js",
     "/js/boot-loader.js"
   ];
 
@@ -22,26 +23,34 @@
       script.src = src;
       script.async = false;
       script.onload = resolve;
-      script.onerror = () => reject(new Error("Could not load " + src));
+      script.onerror = () => reject(new Error(`Could not load ${src}`));
       document.body.appendChild(script);
     });
   }
 
   async function start() {
-    const stylesheet = document.createElement("link");
-    stylesheet.rel = "stylesheet";
-    stylesheet.href = "/css/apps.css";
-    document.head.appendChild(stylesheet);
+    for (const href of ["/css/apps.css"]) {
+      if (!document.querySelector(`link[href="${href}"]`)) {
+        const link = document.createElement("link");
+        link.rel = "stylesheet";
+        link.href = href;
+        document.head.appendChild(link);
+      }
+    }
 
     for (const src of scripts) {
       try {
         await loadScript(src);
       } catch (error) {
         console.error("[SecuOS loader]", error);
-        window.SecuDesktop?.notify?.(
-          "System component unavailable",
-          error.message
-        );
+
+        const toast = document.getElementById("toastContainer");
+        if (toast) {
+          const item = document.createElement("div");
+          item.className = "toast";
+          item.textContent = error.message;
+          toast.appendChild(item);
+        }
       }
     }
 
