@@ -1,0 +1,561 @@
+/* APPLICATION WINDOW */
+
+.app-window {
+  width: min(760px, calc(100vw - 28px));
+  height: min(590px, calc(100vh - 82px));
+}
+
+.app-window-content {
+  height: calc(100% - 43px);
+  overflow: auto;
+  padding: 0;
+  color: var(--desktop-text);
+}
+
+/* WEATHER */
+
+.weather-panel {
+  z-index: 130;
+  width: min(350px, calc(100vw - 20px));
+  padding: 17px;
+}
+
+html[data-os="windows"] .weather-panel {
+  left: 12px;
+  bottom: 62px;
+}
+
+html[data-os="macos"] .weather-panel {
+  right: 12px;
+  top: 38px;
+}
+
+html[data-os="chrome"] .weather-panel {
+  right: 12px;
+  bottom: 65px;
+}
+
+.weather-head,
+.weather-form,
+.weather-stats,
+.weather-days,
+.files-toolbar,
+.notes-toolbar,
+.calendar-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.weather-head > div {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.weather-head strong {
+  font-size: 16px;
+}
+
+.weather-head span,
+.weather-foot {
+  color: var(--desktop-muted);
+  font-size: 11px;
+}
+
+.weather-head button,
+.weather-form button,
+.calendar-toolbar button,
+.notes-toolbar button {
+  border: 0;
+  border-radius: 8px;
+  background: rgba(128,128,128,.14);
+  color: inherit;
+  padding: 8px 10px;
+}
+
+.weather-form {
+  margin-top: 15px;
+}
+
+.weather-form input {
+  flex: 1;
+  min-width: 0;
+  border: 1px solid var(--panel-border);
+  border-radius: 8px;
+  padding: 10px;
+  background: rgba(128,128,128,.1);
+  color: inherit;
+}
+
+.weather-location {
+  width: 100%;
+  margin-top: 8px;
+  border: 0;
+  border-radius: 8px;
+  padding: 9px;
+  background: rgba(128,128,128,.1);
+  color: inherit;
+  font-size: 12px;
+}
+
+.weather-result {
+  min-height: 145px;
+  padding: 16px 0 8px;
+}
+
+.weather-current {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.weather-current > i {
+  font-size: 48px;
+  color: var(--accent);
+}
+
+.weather-current div {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.weather-current strong {
+  font-size: 37px;
+  font-weight: 500;
+}
+
+.weather-current span {
+  color: var(--desktop-muted);
+  font-size: 12px;
+}
+
+.weather-stats {
+  margin-top: 14px;
+  padding: 12px 0;
+  border-top: 1px solid var(--panel-border);
+  border-bottom: 1px solid var(--panel-border);
+}
+
+.weather-stats div,
+.weather-days div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.weather-stats span,
+.weather-days span,
+.weather-days small {
+  color: var(--desktop-muted);
+  font-size: 10px;
+}
+
+.weather-stats strong,
+.weather-days strong {
+  font-size: 13px;
+}
+
+.weather-days {
+  padding-top: 12px;
+}
+
+.weather-days div {
+  align-items: center;
+  flex: 1;
+}
+
+.weather-loading,
+.weather-error,
+.file-empty {
+  display: flex;
+  min-height: 120px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: var(--desktop-muted);
+  text-align: center;
+  font-size: 12px;
+}
+
+.weather-loading i,
+.weather-error i,
+.file-empty i {
+  font-size: 28px;
+}
+
+.weather-foot {
+  margin-top: 6px;
+}
+
+/* CALCULATOR */
+
+.calculator {
+  max-width: 370px;
+  margin: 22px auto;
+  padding: 16px;
+}
+
+.calc-display {
+  min-height: 82px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  overflow: hidden;
+  padding: 12px;
+  font-size: 39px;
+  font-variant-numeric: tabular-nums;
+}
+
+.calc-keys {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.calc-keys button {
+  min-height: 57px;
+  border: 0;
+  border-radius: 12px;
+  background: rgba(128,128,128,.15);
+  color: inherit;
+  font-size: 19px;
+}
+
+.calc-keys button:hover {
+  filter: brightness(1.15);
+}
+
+.calc-keys button.operator {
+  background: var(--accent);
+  color: white;
+}
+
+.calc-keys button:nth-last-child(2) {
+  grid-column: span 2;
+}
+
+/* NOTES */
+
+.notes-app {
+  height: 100%;
+  min-height: 350px;
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  gap: 10px;
+}
+
+.notes-toolbar {
+  color: var(--desktop-muted);
+  font-size: 11px;
+}
+
+.notes-app textarea {
+  flex: 1;
+  width: 100%;
+  resize: none;
+  border: 1px solid var(--panel-border);
+  border-radius: 10px;
+  padding: 15px;
+  background: rgba(128,128,128,.07);
+  color: inherit;
+  font: 14px/1.6 ui-monospace, monospace;
+}
+
+.notes-status {
+  color: var(--desktop-muted);
+  font-size: 11px;
+  text-align: right;
+}
+
+/* CALENDAR */
+
+.calendar-app {
+  max-width: 520px;
+  margin: 24px auto;
+  padding: 0 20px;
+}
+
+.calendar-toolbar {
+  margin-bottom: 18px;
+}
+
+.calendar-toolbar strong {
+  font-size: 18px;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 5px;
+}
+
+.calendar-grid > * {
+  min-height: 42px;
+  display: grid;
+  place-items: center;
+  border-radius: 9px;
+}
+
+.calendar-weekdays {
+  margin-bottom: 5px;
+  color: var(--desktop-muted);
+  font-size: 11px;
+}
+
+.calendar-grid button {
+  border: 0;
+  background: rgba(128,128,128,.08);
+  color: inherit;
+}
+
+.calendar-grid button:hover {
+  background: rgba(128,128,128,.2);
+}
+
+.calendar-grid button.today {
+  background: var(--accent);
+  color: white;
+}
+
+.calendar-hint {
+  min-height: 20px;
+  margin-top: 16px;
+  color: var(--desktop-muted);
+  font-size: 12px;
+}
+
+/* FILES */
+
+.files-app {
+  padding: 18px;
+}
+
+.files-toolbar {
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--panel-border);
+}
+
+.files-toolbar > div {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.file-pick {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.files-note {
+  color: var(--desktop-muted);
+  font-size: 12px;
+}
+
+.file-list {
+  margin-top: 16px;
+}
+
+.file-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 8px;
+  border-bottom: 1px solid var(--panel-border);
+}
+
+.file-row > span {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.file-row small {
+  color: var(--desktop-muted);
+}
+
+/* CLOCK */
+
+.clock-app {
+  display: flex;
+  min-height: 350px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.clock-face {
+  font-size: clamp(48px, 9vw, 82px);
+  font-weight: 300;
+  letter-spacing: -3px;
+  font-variant-numeric: tabular-nums;
+}
+
+.clock-app p {
+  color: var(--desktop-muted);
+  font-size: 12px;
+}
+
+/* SLEEP SCREEN */
+
+#secu-sleep-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 999998;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: #05070b;
+  color: white;
+  font-family: "Segoe UI", system-ui, sans-serif;
+}
+
+#secu-sleep-screen.active {
+  display: flex;
+}
+
+#secu-sleep-screen span {
+  color: #aab1bf;
+  font-size: 12px;
+}
+
+.sleep-mark {
+  width: 64px;
+  height: 64px;
+  display: grid;
+  place-items: center;
+  margin-bottom: 8px;
+  border: 1px solid #ffffff25;
+  border-radius: 20px;
+  background: #ffffff12;
+  font-size: 30px;
+  font-weight: 800;
+}
+
+/* WINDOWS LOGIN */
+
+#secu-boot[data-os="windows"]:has(#secu-login-password) {
+  background: linear-gradient(135deg, #111c32, #253d61 55%, #111827);
+}
+
+#secu-boot[data-os="windows"]:has(#secu-login-password) .secu-boot-content {
+  width: min(420px, calc(100% - 36px));
+  padding: 34px;
+  border: 1px solid #ffffff28;
+  border-radius: 18px;
+  background: #101827b8;
+  backdrop-filter: blur(24px);
+  box-shadow: 0 28px 90px #0008;
+}
+
+#secu-boot[data-os="windows"]:has(#secu-login-password) .secu-boot-avatar {
+  width: 92px;
+  height: 92px;
+  border-radius: 50%;
+}
+
+/* MACOS LOGIN */
+
+#secu-boot[data-os="macos"]:has(#secu-login-password) {
+  background: linear-gradient(145deg, #1c2538, #35455e 55%, #121722);
+}
+
+#secu-boot[data-os="macos"]:has(#secu-login-password) .secu-boot-content {
+  width: min(390px, calc(100% - 36px));
+  padding: 32px;
+  border: 1px solid #ffffff35;
+  border-radius: 22px;
+  background: #f5f7fa20;
+  backdrop-filter: blur(34px) saturate(150%);
+  box-shadow: 0 24px 80px #0006;
+}
+
+#secu-boot[data-os="macos"]:has(#secu-login-password) .secu-boot-logo {
+  display: none;
+}
+
+#secu-boot[data-os="macos"]:has(#secu-login-password) .secu-boot-avatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+}
+
+/* CHROMEOS LOGIN */
+
+#secu-boot[data-os="chrome"]:has(#secu-login-password) {
+  background: radial-gradient(circle at 50% 40%, #34465f, #182638 58%, #101820);
+}
+
+#secu-boot[data-os="chrome"]:has(#secu-login-password) .secu-boot-content {
+  width: min(440px, calc(100% - 36px));
+  padding: 34px;
+  border: 1px solid #ffffff20;
+  border-radius: 26px;
+  background: #f8fbffed;
+  color: #202733;
+  box-shadow: 0 24px 80px #0007;
+}
+
+#secu-boot[data-os="chrome"]:has(#secu-login-password) .secu-boot-description,
+#secu-boot[data-os="chrome"]:has(#secu-login-password) .secu-boot-footer {
+  color: #667080;
+}
+
+#secu-boot[data-os="chrome"]:has(#secu-login-password) .secu-boot-avatar {
+  background: #e5edfb;
+  color: #24334c;
+  border-color: #d2dced;
+}
+
+#secu-boot[data-os="chrome"]:has(#secu-login-password) .secu-boot-field {
+  background: white;
+  border-color: #cbd4e2;
+  color: #202733;
+}
+
+#secu-boot[data-os="chrome"]:has(#secu-login-password) .secu-boot-field::placeholder {
+  color: #7d8797;
+}
+
+#secu-boot[data-os="chrome"]:has(#secu-login-password) .secu-boot-button {
+  background: #1a73e8;
+  color: white;
+}
+
+#secu-boot[data-os="chrome"]:has(#secu-login-password) .secu-boot-button.secondary {
+  background: #eaf1fb;
+  color: #1b2a40;
+  border-color: #d7e1ef;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 520px) {
+  .app-window {
+    width: calc(100vw - 12px);
+    height: calc(100vh - 62px);
+  }
+
+  .weather-panel {
+    max-height: calc(100vh - 90px);
+    overflow: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .calc-keys button,
+  .weather-panel,
+  .app-window {
+    transition: none !important;
+  }
+}
