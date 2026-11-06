@@ -3,7 +3,7 @@ const SESSION_KEY = "secuos.session";
 
 const encoder = new TextEncoder();
 
-function randomSalt() {
+function createSalt() {
     const bytes = crypto.getRandomValues(
         new Uint8Array(16)
     );
@@ -13,10 +13,10 @@ function randomSalt() {
         .join("");
 }
 
-async function derivePassword(password, salt) {
+async function hashPassword(password, salt) {
     if (!crypto.subtle) {
         throw new Error(
-            "Secure password hashing requires HTTPS or localhost."
+            "Password protection requires HTTPS or localhost."
         );
     }
 
@@ -28,7 +28,7 @@ async function derivePassword(password, salt) {
         ["deriveBits"]
     );
 
-    const bits = await crypto.subtle.deriveBits(
+    const result = await crypto.subtle.deriveBits(
         {
             name: "PBKDF2",
             salt: encoder.encode(salt),
@@ -39,16 +39,15 @@ async function derivePassword(password, salt) {
         256
     );
 
-    return Array.from(new Uint8Array(bits))
+    return Array.from(new Uint8Array(result))
         .map(byte => byte.toString(16).padStart(2, "0"))
         .join("");
 }
 
 export function getProfile() {
     try {
-        return JSON.parse(
-            localStorage.getItem(PROFILE_KEY)
-        );
+        const profile = localStorage.getItem(PROFILE_KEY);
+        return profile ? JSON.parse(profile) : null;
     } catch {
         return null;
     }
@@ -59,17 +58,24 @@ export async function createProfile({
     username,
     password = ""
 }) {
+    displayName = String(displayName || "").trim();
+    username = String(username || "").trim();
+
     if (!displayName || !username) {
-        throw new Error("A name and username are required.");
+        throw new Error(
+            "Display name and username are required."
+        );
     }
 
     if (!/^[a-zA-Z0-9._-]{3,24}$/.test(username)) {
-        throw new Error("Invalid username.");
+        throw new Error(
+            "Username must be 3–24 characters."
+        );
     }
 
     if (password && password.length < 8) {
         throw new Error(
-            "Password must contain at least 8 characters."
+            "Password must be at least 8 characters."
         );
     }
 
@@ -77,26 +83,27 @@ export async function createProfile({
     let passwordHash = null;
 
     if (password) {
-        passwordSalt = randomSalt();
+        passwordSalt = createSalt();
 
-        passwordHash = await derivePassword(
+        passwordHash = await hashPassword(
             password,
             passwordSalt
         );
     }
+
+    const avatar = displayName
+        .split(/\s+/)
+        .slice(0, 2)
+        .map(part => part[0])
+        .join("")
+        .toUpperCase();
 
     const profile = {
         displayName,
         username,
         passwordSalt,
         passwordHash,
-        avatar: displayName
-            .trim()
-            .split(/\s+/)
-            .slice(0, 2)
-            .map(part => part[0])
-            .join("")
-            .toUpperCase(),
+        avatar,
         createdAt: new Date().toISOString()
     };
 
@@ -115,7 +122,7 @@ export async function verifyPassword(password) {
         return false;
     }
 
-    const hash = await derivePassword(
+    const hash = await hashPassword(
         password,
         profile.passwordSalt
     );
@@ -124,23 +131,35 @@ export async function verifyPassword(password) {
 }
 
 export function startSession() {
+    const session = {
+        startedAt: Date.now(),
+        sessionId: crypto.randomUUID()
+    };
+
     sessionStorage.setItem(
         SESSION_KEY,
-        JSON.stringify({
-            startedAt: Date.now(),
-            sessionId: crypto.randomUUID()
-        })
+        JSON.stringify(session)
     );
+
+    return session;
+}
+
+export function getSession() {
+    try {
+        return JSON.parse(
+            sessionStorage.getItem(SESSION_KEY)
+        );
+    } catch {
+        return null;
+    }
+}
+
+export function hasActiveSession() {
+    return Boolean(getSession());
 }
 
 export function endSession() {
     sessionStorage.removeItem(SESSION_KEY);
-}
-
-export function hasActiveSession() {
-    return Boolean(
-        sessionStorage.getItem(SESSION_KEY)
-    );
 }
 
 export function deleteProfile() {
