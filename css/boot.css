@@ -1,0 +1,308 @@
+:root {
+    --secu-boot-bg: #08090d;
+    --secu-boot-text: #f5f6fa;
+    --secu-boot-muted: #9299a8;
+    --secu-boot-accent: #8195ff;
+    --secu-boot-border: #ffffff18;
+}
+
+#secu-boot {
+    position: fixed;
+    inset: 0;
+    z-index: 999999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: auto;
+    color: var(--secu-boot-text);
+    background: var(--secu-boot-bg);
+    font-family: Inter, "Segoe UI", sans-serif;
+}
+
+#secu-boot *,
+#secu-boot *::before,
+#secu-boot *::after {
+    box-sizing: border-box;
+}
+
+.secu-boot-background {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+        radial-gradient(
+            ellipse at 50% 38%,
+            #28375485,
+            transparent 55%
+        ),
+        radial-gradient(
+            ellipse at 10% 90%,
+            #222b4555,
+            transparent 45%
+        );
+}
+
+.secu-boot-grid {
+    position: absolute;
+    inset: 0;
+    opacity: .11;
+    pointer-events: none;
+    background-image:
+        linear-gradient(#ffffff12 1px, transparent 1px),
+        linear-gradient(90deg, #ffffff12 1px, transparent 1px);
+    background-size: 48px 48px;
+    mask-image: linear-gradient(
+        to bottom,
+        black,
+        transparent 85%
+    );
+}
+
+.secu-boot-content {
+    position: relative;
+    z-index: 2;
+    width: min(440px, calc(100% - 36px));
+    margin: auto;
+    padding: 30px 0;
+    text-align: center;
+    animation: secu-boot-appear .5s ease both;
+}
+
+.secu-boot-logo {
+    width: 82px;
+    height: 82px;
+    display: grid;
+    place-items: center;
+    margin: 0 auto 27px;
+    border: 1px solid #ffffff25;
+    border-radius: 25px;
+    background: linear-gradient(
+        145deg,
+        #30394b,
+        #11151e
+    );
+    box-shadow:
+        0 18px 65px #0009,
+        inset 0 1px #ffffff25;
+    font-size: 36px;
+    font-weight: 800;
+    letter-spacing: -4px;
+}
+
+.secu-boot-title {
+    margin: 0;
+    font-size: 29px;
+    font-weight: 650;
+    letter-spacing: -1.1px;
+}
+
+.secu-boot-description {
+    margin: 11px 0 26px;
+    color: var(--secu-boot-muted);
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+.secu-boot-button {
+    width: 100%;
+    padding: 14px 18px;
+    border: 1px solid transparent;
+    border-radius: 12px;
+    background: #f1f2f6;
+    color: #101116;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition:
+        transform .2s ease,
+        background .2s ease,
+        border-color .2s ease;
+}
+
+.secu-boot-button:hover {
+    transform: translateY(-2px);
+    background: white;
+}
+
+.secu-boot-button:active {
+    transform: scale(.985);
+}
+
+.secu-boot-button.secondary {
+    margin-top: 10px;
+    border-color: var(--secu-boot-border);
+    background: #ffffff0b;
+    color: white;
+}
+
+.secu-boot-button.secondary:hover {
+    background: #ffffff15;
+}
+
+.secu-boot-field {
+    width: 100%;
+    padding: 14px 15px;
+    margin-bottom: 12px;
+    border: 1px solid var(--secu-boot-border);
+    border-radius: 11px;
+    outline: none;
+    background: #ffffff09;
+    color: white;
+    font-family: inherit;
+    font-size: 13px;
+    transition: border-color .2s ease;
+}
+
+.secu-boot-field:focus {
+    border-color: var(--secu-boot-accent);
+    box-shadow: 0 0 0 3px #8195ff20;
+}
+
+.secu-boot-field::placeholder {
+    color: #777f8d;
+}
+
+.secu-boot-error {
+    min-height: 18px;
+    margin: 0 0 12px;
+    color: #ff9292;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.secu-boot-footer {
+    margin-top: 28px;
+    color: #707887;
+    font-family: monospace;
+    font-size: 10px;
+    letter-spacing: .5px;
+}
+
+.secu-boot-progress {
+    width: 100%;
+    height: 4px;
+    margin: 25px 0 12px;
+    overflow: hidden;
+    border-radius: 20px;
+    background: #ffffff18;
+}
+
+.secu-boot-progress-fill {
+    width: 0;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--secu-boot-accent);
+    box-shadow: 0 0 15px var(--secu-boot-accent);
+    transition: width .15s linear;
+}
+
+.secu-boot-status {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    color: var(--secu-boot-muted);
+    font-family: monospace;
+    font-size: 11px;
+}
+
+.secu-boot-checks {
+    max-height: 230px;
+    overflow-y: auto;
+    margin-top: 20px;
+    padding: 12px 15px;
+    border: 1px solid var(--secu-boot-border);
+    border-radius: 13px;
+    background: #ffffff07;
+    text-align: left;
+}
+
+.secu-boot-check {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 9px 2px;
+    color: #b8bfcc;
+    font-size: 11px;
+}
+
+.secu-boot-check + .secu-boot-check {
+    border-top: 1px solid #ffffff0c;
+}
+
+.secu-boot-check i {
+    font-size: 15px;
+    color: #8ed6ad;
+}
+
+.secu-boot-avatar {
+    width: 76px;
+    height: 76px;
+    display: grid;
+    place-items: center;
+    margin: 0 auto 20px;
+    border: 1px solid #ffffff25;
+    border-radius: 50%;
+    background: linear-gradient(
+        145deg,
+        #414d68,
+        #171c29
+    );
+    box-shadow: 0 10px 35px #0006;
+    font-size: 26px;
+    font-weight: 700;
+}
+
+.secu-boot-spinner {
+    width: 30px;
+    height: 30px;
+    margin: 0 auto 22px;
+    border: 2px solid #ffffff20;
+    border-top-color: var(--secu-boot-accent);
+    border-radius: 50%;
+    animation: secu-boot-spin .8s linear infinite;
+}
+
+@keyframes secu-boot-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes secu-boot-appear {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 480px) {
+    .secu-boot-content {
+        width: calc(100% - 42px);
+    }
+
+    .secu-boot-title {
+        font-size: 25px;
+    }
+
+    .secu-boot-logo {
+        width: 72px;
+        height: 72px;
+        font-size: 32px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #secu-boot *,
+    #secu-boot *::before,
+    #secu-boot *::after {
+        animation-duration: .01ms !important;
+        transition-duration: .01ms !important;
+    }
+}
