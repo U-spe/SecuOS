@@ -3,27 +3,30 @@ const reducedMotion = window.matchMedia(
 ).matches;
 
 export const BootEffects = {
-    sleep(ms) {
-        return new Promise(resolve =>
-            setTimeout(resolve, reducedMotion ? 0 : ms)
-        );
+    sleep(milliseconds) {
+        return new Promise(resolve => {
+            setTimeout(
+                resolve,
+                reducedMotion ? 0 : milliseconds
+            );
+        });
     },
 
     async progress(callback, duration = 1200) {
         const steps = reducedMotion ? 1 : 50;
 
         for (let step = 0; step <= steps; step++) {
-            const value = Math.round(
+            const percentage = Math.round(
                 (step / steps) * 100
             );
 
-            callback(value);
+            callback(percentage);
 
             await this.sleep(duration / steps);
         }
     },
 
-    async typeText(element, text, speed = 18) {
+    async typeText(element, text, speed = 20) {
         if (!element) return;
 
         element.textContent = "";
@@ -44,21 +47,13 @@ export const BootEffects = {
         });
     },
 
-    createBootLog(messages) {
+    createLog(messages) {
         return messages.map(message => {
             const timestamp = new Date()
                 .toLocaleTimeString();
 
-            return `[$DIL0] $DIL1`;
+            return `[${timestamp}] ${message}`;
         });
-    },
-
-    async ambientSound(enabled = false) {
-        if (!enabled || reducedMotion) return;
-
-        // Audio is intentionally opt-in.
-        // No audio plays without user permission.
-        return;
     },
 
     get reducedMotion() {
