@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-os="windows">
+<html lang="en" data-os="windows" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,891 +7,384 @@
   <meta name="description" content="SecuOS browser desktop environment">
   <title>SecuOS</title>
 
-  <!-- ICONS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css">
-
-  <!-- DESKTOP STYLES -->
   <link rel="stylesheet" href="/css/desktop.css">
   <link rel="stylesheet" href="/css/windows.css">
   <link rel="stylesheet" href="/css/macos.css">
   <link rel="stylesheet" href="/css/chromeos.css">
   <link rel="stylesheet" href="/css/window-manager.css">
   <link rel="stylesheet" href="/css/responsive.css">
-
-  <!-- BOOT AND SYSTEM EXPERIENCE -->
   <link rel="stylesheet" href="/css/boot.css">
   <link rel="stylesheet" href="/css/system-experience.css">
+  <link rel="stylesheet" href="/css/apps.css">
 </head>
 
 <body>
-
-  <!-- =================================================
-       DESKTOP ROOT
-  ================================================== -->
-
   <div id="desktop" class="desktop">
-
-    <!-- WALLPAPER -->
     <div class="wallpaper"></div>
     <div class="desktop-shade"></div>
 
-    <!-- =================================================
-         WINDOWS 11 DESKTOP
-    ================================================== -->
-
+    <!-- WINDOWS DESKTOP -->
     <section class="desktop-layer windows-layer" aria-label="Windows desktop">
-
-      <!-- DESKTOP SHORTCUTS -->
       <div class="desktop-shortcuts">
-
-        <button class="desktop-icon" data-icon="files" data-app="files">
-          <i class="ri-folder-3-fill"></i>
-          <span>Files</span>
+        <button class="desktop-icon" data-app="files">
+          <i class="ri-folder-3-fill"></i><span>Files</span>
         </button>
-
-        <button class="desktop-icon" data-icon="computer">
-          <i class="ri-computer-line"></i>
-          <span>This PC</span>
+        <button class="desktop-icon" data-app="trash">
+          <i class="ri-delete-bin-6-line"></i><span>Trash</span>
         </button>
-
-        <button class="desktop-icon" data-icon="trash">
-          <i class="ri-delete-bin-6-line"></i>
-          <span>Recycle Bin</span>
+        <button class="desktop-icon" data-app="gallery">
+          <i class="ri-gallery-line"></i><span>Gallery</span>
         </button>
-
-        <button class="desktop-icon" data-action="settings">
-          <i class="ri-settings-3-fill"></i>
-          <span>Settings</span>
+        <button class="desktop-icon" data-app="settings">
+          <i class="ri-settings-3-fill"></i><span>Settings</span>
         </button>
-
       </div>
 
-      <!-- TASKBAR -->
       <div class="windows-taskbar">
-
         <div class="taskbar-left">
           <button class="weather-button" id="weatherButton">
-            <i class="ri-sun-line"></i>
-            <span>Weather</span>
+            <i class="ri-sun-line"></i><span>Weather</span>
           </button>
         </div>
 
         <div class="taskbar-center">
-
           <button class="taskbar-button windows-logo" id="startButton" aria-label="Start">
             <i class="ri-windows-fill"></i>
           </button>
-
           <button class="taskbar-button" id="taskSearch" aria-label="Search">
             <i class="ri-search-line"></i>
           </button>
-
-          <button class="taskbar-button" aria-label="Task view">
-            <i class="ri-layout-grid-line"></i>
-          </button>
-
-          <button class="taskbar-button" aria-label="Files" data-app="files">
+          <button class="taskbar-button" data-app="files" aria-label="Files">
             <i class="ri-folder-fill"></i>
           </button>
-
-          <button class="taskbar-button" aria-label="Settings" data-action="settings">
+          <button class="taskbar-button" data-app="settings" aria-label="Settings">
             <i class="ri-settings-3-line"></i>
           </button>
-
         </div>
 
         <div class="taskbar-right">
-
           <button class="tray-button" id="windowsTrayButton" aria-label="System tray">
             <i class="ri-wifi-line"></i>
             <i class="ri-volume-up-line"></i>
             <i class="ri-battery-2-charge-line"></i>
           </button>
-
-          <button class="clock-button" id="windowsClock">
+          <button class="clock-button" id="windowsClock" aria-label="Date and time">
             <span class="clock-time"></span>
             <span class="clock-date"></span>
           </button>
-
           <button class="show-desktop-button" aria-label="Show desktop"></button>
-
         </div>
       </div>
 
-      <!-- START MENU -->
       <div class="start-menu floating-panel" id="startMenu">
-
         <div class="start-search">
           <i class="ri-search-line"></i>
-          <input type="search" placeholder="Search for anything">
+          <input type="search" placeholder="Search apps">
         </div>
-
         <div class="start-section-heading">
           <strong>Pinned</strong>
-          <button>All apps <i class="ri-arrow-right-s-line"></i></button>
+          <button type="button" id="startAllApps">All apps <i class="ri-arrow-right-s-line"></i></button>
         </div>
-
-        <div class="pinned-grid">
-
-          <div data-app="files">
-            <i class="ri-folder-3-fill"></i>
-            <span>Files</span>
-          </div>
-
-          <div data-action="settings">
-            <i class="ri-settings-3-fill"></i>
-            <span>Settings</span>
-          </div>
-
-          <div data-app="calendar">
-            <i class="ri-calendar-line"></i>
-            <span>Calendar</span>
-          </div>
-
-          <div>
-            <i class="ri-image-line"></i>
-            <span>Photos</span>
-          </div>
-
-          <div data-app="notes">
-            <i class="ri-sticky-note-line"></i>
-            <span>Notepad</span>
-          </div>
-
-          <div data-app="calculator">
-            <i class="ri-calculator-line"></i>
-            <span>Calculator</span>
-          </div>
-
-          <div data-app="clock">
-            <i class="ri-time-line"></i>
-            <span>Clock</span>
-          </div>
-
-        </div>
-
+        <div class="pinned-grid" id="windowsAppGrid"></div>
         <div class="start-bottom">
-
           <div class="profile-small">
             <img src="/assets/graphics/avatars/default.png" alt="">
             <span class="profile-name">User</span>
           </div>
-
           <button id="powerButton" aria-label="Power options">
             <i class="ri-shut-down-line"></i>
           </button>
-
         </div>
       </div>
-
     </section>
 
-    <!-- =================================================
-         MACOS DESKTOP
-    ================================================== -->
-
+    <!-- MACOS DESKTOP -->
     <section class="desktop-layer macos-layer" aria-label="macOS desktop">
-
-      <!-- MENU BAR -->
       <div class="mac-menubar">
-
         <div class="mac-menu-left">
-
-          <button class="apple-button" id="appleMenuButton">
-            <i class="ri-apple-fill"></i>
-          </button>
-
+          <button class="apple-button" id="appleMenuButton"><i class="ri-apple-fill"></i></button>
           <strong>SecuOS</strong>
-
-          <button>File</button>
-          <button>Edit</button>
-          <button>View</button>
-          <button>Window</button>
-          <button>Help</button>
-
+          <button>File</button><button>Edit</button><button>View</button>
+          <button>Window</button><button>Help</button>
         </div>
-
         <div class="mac-menu-right">
-
-          <button id="macWeatherButton" aria-label="Weather">
-            <i class="ri-sun-line"></i>
-          </button>
-
-          <i class="ri-wifi-line"></i>
-          <i class="ri-bluetooth-line"></i>
+          <button id="macWeatherButton" aria-label="Weather"><i class="ri-sun-line"></i></button>
+          <i class="ri-wifi-line"></i><i class="ri-bluetooth-line"></i>
           <i class="ri-battery-2-charge-line"></i>
-
-          <button id="macControlButton">
-            <i class="ri-toggle-line"></i>
-          </button>
-
-          <button id="macClock">
-            <span class="clock-time"></span>
-          </button>
-
+          <button id="macControlButton"><i class="ri-toggle-line"></i></button>
+          <button id="macClock"><span class="clock-time"></span></button>
         </div>
       </div>
 
-      <!-- DESKTOP ICONS -->
       <div class="mac-shortcuts">
-
         <button class="desktop-icon" data-app="files">
-          <i class="ri-hard-drive-2-line"></i>
-          <span>Macintosh HD</span>
+          <i class="ri-hard-drive-2-line"></i><span>Macintosh HD</span>
         </button>
-
-        <button class="desktop-icon" data-app="files">
-          <i class="ri-folder-3-fill"></i>
-          <span>Documents</span>
+        <button class="desktop-icon" data-app="gallery">
+          <i class="ri-images-line"></i><span>Photos</span>
         </button>
-
-        <button class="desktop-icon">
-          <i class="ri-delete-bin-line"></i>
-          <span>Trash</span>
+        <button class="desktop-icon" data-app="trash">
+          <i class="ri-delete-bin-line"></i><span>Trash</span>
         </button>
-
       </div>
 
-      <!-- DOCK -->
       <div class="mac-dock-container">
-
-        <div class="mac-dock">
-
-          <button class="dock-icon" aria-label="Finder" data-app="files">
-            <i class="ri-folder-open-fill"></i>
-          </button>
-
-          <button class="dock-icon" aria-label="Launchpad">
-            <i class="ri-apps-2-fill"></i>
-          </button>
-
-          <button class="dock-icon" aria-label="Settings" data-action="settings">
-            <i class="ri-settings-3-fill"></i>
-          </button>
-
+        <div class="mac-dock" id="macDock">
+          <button class="dock-icon" aria-label="Finder" data-app="files"><i class="ri-folder-open-fill"></i></button>
+          <button class="dock-icon" aria-label="Launchpad" data-app="apps"><i class="ri-apps-2-fill"></i></button>
+          <button class="dock-icon" aria-label="Settings" data-app="settings"><i class="ri-settings-3-fill"></i></button>
           <div class="dock-divider"></div>
-
-          <button class="dock-icon" aria-label="Calendar" data-app="calendar">
-            <i class="ri-calendar-2-fill"></i>
-          </button>
-
-          <button class="dock-icon" aria-label="Photos">
-            <i class="ri-image-fill"></i>
-          </button>
-
-          <button class="dock-icon" aria-label="Notes" data-app="notes">
-            <i class="ri-sticky-note-fill"></i>
-          </button>
-
-          <button class="dock-icon" aria-label="Calculator" data-app="calculator">
-            <i class="ri-calculator-line"></i>
-          </button>
-
+          <button class="dock-icon" aria-label="Calendar" data-app="calendar"><i class="ri-calendar-2-fill"></i></button>
+          <button class="dock-icon" aria-label="Photos" data-app="gallery"><i class="ri-image-fill"></i></button>
+          <button class="dock-icon" aria-label="Notes" data-app="notepad"><i class="ri-sticky-note-fill"></i></button>
+          <button class="dock-icon" aria-label="Music" data-app="soundie"><i class="ri-music-2-fill"></i></button>
           <div class="dock-divider"></div>
-
-          <button class="dock-icon" aria-label="Trash">
-            <i class="ri-delete-bin-line"></i>
-          </button>
-
+          <button class="dock-icon" aria-label="Trash" data-app="trash"><i class="ri-delete-bin-line"></i></button>
         </div>
       </div>
 
-      <!-- APPLE MENU -->
       <div class="apple-menu floating-panel" id="appleMenu">
-
-        <button>About This Mac</button>
-
-        <button data-action="settings">
-          System Settings
-        </button>
-
+        <button data-app="settings">System Settings</button>
+        <button data-app="apps">Applications</button>
         <hr>
-
         <button data-power="sleep">Sleep</button>
         <button data-power="restart">Restart</button>
         <button data-power="shutdown">Shut Down</button>
-
       </div>
-
     </section>
 
-    <!-- =================================================
-         CHROMEOS DESKTOP
-    ================================================== -->
-
+    <!-- CHROMEOS DESKTOP -->
     <section class="desktop-layer chrome-layer" aria-label="ChromeOS desktop">
-
-      <!-- SHORTCUTS -->
       <div class="chrome-shortcuts">
-
-        <button class="desktop-icon" data-app="files">
-          <i class="ri-folder-3-fill"></i>
-          <span>My files</span>
-        </button>
-
-        <button class="desktop-icon">
-          <i class="ri-image-line"></i>
-          <span>Gallery</span>
-        </button>
-
-        <button class="desktop-icon" data-action="settings">
-          <i class="ri-settings-3-line"></i>
-          <span>Settings</span>
-        </button>
-
+        <button class="desktop-icon" data-app="files"><i class="ri-folder-3-fill"></i><span>My files</span></button>
+        <button class="desktop-icon" data-app="gallery"><i class="ri-image-line"></i><span>Gallery</span></button>
+        <button class="desktop-icon" data-app="settings"><i class="ri-settings-3-line"></i><span>Settings</span></button>
       </div>
 
-      <!-- SHELF -->
       <div class="chrome-shelf">
-
         <button class="shelf-launcher" id="launcherButton" aria-label="Launcher">
           <i class="ri-circle-fill"></i>
         </button>
-
-        <div class="shelf-apps">
-
-          <button data-app="files" aria-label="Files">
-            <i class="ri-folder-fill"></i>
-          </button>
-
-          <button data-app="calendar" aria-label="Calendar">
-            <i class="ri-calendar-line"></i>
-          </button>
-
-          <button data-app="notes" aria-label="Notes">
-            <i class="ri-sticky-note-line"></i>
-          </button>
-
-          <button data-app="calculator" aria-label="Calculator">
-            <i class="ri-calculator-line"></i>
-          </button>
-
-          <button data-action="settings" aria-label="Settings">
-            <i class="ri-settings-3-line"></i>
-          </button>
-
+        <div class="shelf-apps" id="chromeShelfApps">
+          <button data-app="files" aria-label="Files"><i class="ri-folder-fill"></i></button>
+          <button data-app="gallery" aria-label="Gallery"><i class="ri-image-line"></i></button>
+          <button data-app="calendar" aria-label="Calendar"><i class="ri-calendar-line"></i></button>
+          <button data-app="notepad" aria-label="Notepad"><i class="ri-sticky-note-line"></i></button>
+          <button data-app="settings" aria-label="Settings"><i class="ri-settings-3-line"></i></button>
         </div>
-
         <div class="shelf-status">
-
           <button id="chromeStatusButton">
-            <i class="ri-wifi-line"></i>
-            <i class="ri-battery-2-charge-line"></i>
+            <i class="ri-wifi-line"></i><i class="ri-battery-2-charge-line"></i>
             <span class="clock-time"></span>
           </button>
-
         </div>
       </div>
 
-      <!-- LAUNCHER -->
       <div class="chrome-launcher floating-panel" id="chromeLauncher">
-
         <div class="launcher-search">
           <i class="ri-search-line"></i>
           <input type="search" placeholder="Search your device">
         </div>
-
-        <div class="launcher-grid">
-
-          <div data-app="files">
-            <i class="ri-folder-fill"></i>
-            <span>Files</span>
-          </div>
-
-          <div data-action="settings">
-            <i class="ri-settings-3-fill"></i>
-            <span>Settings</span>
-          </div>
-
-          <div data-app="calendar">
-            <i class="ri-calendar-line"></i>
-            <span>Calendar</span>
-          </div>
-
-          <div data-app="notes">
-            <i class="ri-sticky-note-line"></i>
-            <span>Notes</span>
-          </div>
-
-          <div data-app="calculator">
-            <i class="ri-calculator-line"></i>
-            <span>Calculator</span>
-          </div>
-
-          <div data-app="clock">
-            <i class="ri-time-line"></i>
-            <span>Clock</span>
-          </div>
-
-        </div>
+        <div class="launcher-grid" id="chromeAppGrid"></div>
       </div>
-
     </section>
 
-    <!-- =================================================
-         SHARED QUICK SETTINGS
-    ================================================== -->
-
+    <!-- SHARED QUICK SETTINGS -->
     <div class="quick-settings floating-panel" id="quickSettings">
-
       <div class="quick-top">
         <strong>Quick Settings</strong>
-
-        <button id="quickSettingsClose">
-          <i class="ri-close-line"></i>
-        </button>
+        <button id="quickSettingsClose"><i class="ri-close-line"></i></button>
       </div>
-
       <div class="quick-toggles">
-
-        <button class="quick-toggle active">
-          <i class="ri-wifi-line"></i>
-          <span>Wi-Fi</span>
-        </button>
-
-        <button class="quick-toggle">
-          <i class="ri-bluetooth-line"></i>
-          <span>Bluetooth</span>
-        </button>
-
-        <button class="quick-toggle">
-          <i class="ri-moon-line"></i>
-          <span>Night Light</span>
-        </button>
-
-        <button class="quick-toggle">
-          <i class="ri-plane-line"></i>
-          <span>Airplane</span>
-        </button>
-
+        <button class="quick-toggle active"><i class="ri-wifi-line"></i><span>Wi-Fi</span></button>
+        <button class="quick-toggle"><i class="ri-bluetooth-line"></i><span>Bluetooth</span></button>
+        <button class="quick-toggle"><i class="ri-moon-line"></i><span>Night Light</span></button>
+        <button class="quick-toggle"><i class="ri-plane-line"></i><span>Airplane</span></button>
       </div>
-
       <div class="quick-slider">
         <i class="ri-sun-line"></i>
         <input type="range" min="10" max="100" value="80" aria-label="Brightness">
       </div>
-
       <div class="quick-slider">
         <i class="ri-volume-up-line"></i>
         <input type="range" min="0" max="100" value="65" aria-label="Volume">
       </div>
-
-      <button class="quick-settings-link" data-action="settings">
-        <i class="ri-settings-3-line"></i>
-        Open Settings
+      <button class="quick-settings-link" data-app="settings">
+        <i class="ri-settings-3-line"></i> Open Settings
       </button>
-
     </div>
 
-    <!-- =================================================
-         NOTIFICATIONS
-    ================================================== -->
-
+    <!-- NOTIFICATIONS -->
     <div class="notification-panel floating-panel" id="notificationPanel">
-
       <div class="panel-heading">
         <strong>Notifications</strong>
         <button id="clearNotifications">Clear all</button>
       </div>
-
       <div class="notification-empty">
         <i class="ri-notification-off-line"></i>
         <strong>You're all caught up</strong>
         <span>No new notifications</span>
       </div>
-
     </div>
 
-    <!-- =================================================
-         WEATHER
-    ================================================== -->
-
+    <!-- WEATHER -->
     <div class="floating-panel weather-panel" id="weatherPanel">
-
       <div class="weather-head">
-
-        <div>
-          <strong>Weather</strong>
-          <span id="weatherPlace">Choose a location</span>
-        </div>
-
-        <button id="weatherClose" aria-label="Close">
-          <i class="ri-close-line"></i>
-        </button>
-
+        <div><strong>Weather</strong><span id="weatherPlace">Choose a location</span></div>
+        <button id="weatherClose"><i class="ri-close-line"></i></button>
       </div>
-
       <form id="weatherForm" class="weather-form">
-
-        <input
-          id="weatherCity"
-          type="text"
-          maxlength="80"
-          placeholder="Enter a city"
-          autocomplete="off"
-        >
-
-        <button type="submit" aria-label="Search">
-          <i class="ri-search-line"></i>
-        </button>
-
+        <input id="weatherCity" maxlength="80" placeholder="Enter a city">
+        <button type="submit"><i class="ri-search-line"></i></button>
       </form>
-
       <button class="weather-location" id="weatherUseLocation">
-        <i class="ri-map-pin-line"></i>
-        Use current location
+        <i class="ri-map-pin-line"></i> Use current location
       </button>
-
       <div id="weatherResult" class="weather-result">
-        <i class="ri-cloud-line"></i>
-        <strong>Weather at a glance</strong>
+        <i class="ri-cloud-line"></i><strong>Weather at a glance</strong>
         <span>Search for a city or choose your location.</span>
       </div>
-
       <div class="weather-foot" id="weatherUpdated"></div>
-
     </div>
 
-    <!-- =================================================
-         APPLICATION WINDOW
-    ================================================== -->
+    <!-- WINDOWS CLOCK / BRIEFING -->
+    <div class="clock-briefing floating-panel" id="clockBriefing">
+      <div class="briefing-header">
+        <div>
+          <span id="briefingWeekday"></span>
+          <strong id="briefingDate"></strong>
+        </div>
+        <button id="briefingClose" aria-label="Close"><i class="ri-close-line"></i></button>
+      </div>
+      <div class="briefing-time" id="briefingTime"></div>
+      <div class="briefing-weather" id="briefingWeather">
+        <i class="ri-cloud-line"></i><span>Weather is available from the taskbar.</span>
+      </div>
+      <div class="briefing-section">
+        <strong>Today's agenda</strong>
+        <div id="briefingAgenda"></div>
+      </div>
+      <button class="briefing-calendar-button" data-app="calendar">
+        Open calendar <i class="ri-arrow-right-line"></i>
+      </button>
+    </div>
 
+    <!-- APP WINDOW -->
     <div class="system-window app-window" id="appWindow" hidden>
-
       <div class="window-titlebar" data-drag-handle>
-
         <div class="window-title">
-          <i class="ri-apps-2-line"></i>
+          <i id="appWindowIcon" class="ri-apps-2-line"></i>
           <span id="appWindowTitle">Application</span>
         </div>
-
         <div class="window-controls">
-
-          <button data-window-minimize aria-label="Minimize">
-            <i class="ri-subtract-line"></i>
-          </button>
-
-          <button data-window-maximize aria-label="Maximize">
-            <i class="ri-checkbox-blank-line"></i>
-          </button>
-
-          <button data-window-close aria-label="Close">
-            <i class="ri-close-line"></i>
-          </button>
-
+          <button data-window-minimize aria-label="Minimize"><i class="ri-subtract-line"></i></button>
+          <button data-window-maximize aria-label="Maximize"><i class="ri-checkbox-blank-line"></i></button>
+          <button data-window-close aria-label="Close"><i class="ri-close-line"></i></button>
         </div>
       </div>
-
       <div class="app-window-content" id="appWindowContent"></div>
-
     </div>
 
-    <!-- =================================================
-         SETTINGS WINDOW
-    ================================================== -->
-
+    <!-- SETTINGS WINDOW -->
     <div class="system-window" id="settingsWindow" hidden>
-
       <div class="window-titlebar" data-drag-handle>
-
-        <div class="window-title">
-          <i class="ri-settings-3-line"></i>
-          <span>Settings</span>
-        </div>
-
+        <div class="window-title"><i class="ri-settings-3-line"></i><span>Settings</span></div>
         <div class="window-controls">
-
-          <button data-window-minimize>
-            <i class="ri-subtract-line"></i>
-          </button>
-
-          <button data-window-maximize>
-            <i class="ri-checkbox-blank-line"></i>
-          </button>
-
-          <button data-window-close>
-            <i class="ri-close-line"></i>
-          </button>
-
+          <button data-window-minimize><i class="ri-subtract-line"></i></button>
+          <button data-window-maximize><i class="ri-checkbox-blank-line"></i></button>
+          <button data-window-close><i class="ri-close-line"></i></button>
         </div>
       </div>
 
       <div class="settings-content">
-
         <aside class="settings-sidebar">
-
           <div class="settings-profile">
             <img src="/assets/graphics/avatars/default.png" alt="">
-
-            <div>
-              <strong class="profile-name">User</strong>
-              <span>Local profile</span>
-            </div>
+            <div><strong class="profile-name">User</strong><span>Local profile</span></div>
           </div>
-
-          <button class="settings-nav active" data-settings-page="appearance">
-            <i class="ri-palette-line"></i>
-            Appearance
-          </button>
-
-          <button class="settings-nav" data-settings-page="personalization">
-            <i class="ri-user-line"></i>
-            Personalization
-          </button>
-
-          <button class="settings-nav" data-settings-page="system">
-            <i class="ri-computer-line"></i>
-            System
-          </button>
-
-          <button class="settings-nav" data-settings-page="about">
-            <i class="ri-information-line"></i>
-            About SecuOS
-          </button>
-
+          <button class="settings-nav active" data-settings-page="appearance"><i class="ri-palette-line"></i>Appearance</button>
+          <button class="settings-nav" data-settings-page="personalization"><i class="ri-user-line"></i>Personalization</button>
+          <button class="settings-nav" data-settings-page="system"><i class="ri-computer-line"></i>System</button>
+          <button class="settings-nav" data-settings-page="about"><i class="ri-information-line"></i>About SecuOS</button>
         </aside>
 
         <div class="settings-main">
-
-          <!-- APPEARANCE -->
           <section class="settings-page active" data-page="appearance">
-
-            <h2>Appearance</h2>
-            <p>Make your desktop feel like home.</p>
-
+            <h2>Appearance</h2><p>Make your desktop feel like home.</p>
             <h3>Desktop style</h3>
-
             <div class="os-picker">
-
-              <button data-set-os="windows" class="os-choice active">
-                <i class="ri-windows-fill"></i>
-                <span>Windows 11</span>
-              </button>
-
-              <button data-set-os="macos" class="os-choice">
-                <i class="ri-apple-fill"></i>
-                <span>macOS</span>
-              </button>
-
-              <button data-set-os="chrome" class="os-choice">
-                <i class="ri-chrome-fill"></i>
-                <span>ChromeOS</span>
-              </button>
-
+              <button data-set-os="windows" class="os-choice active"><i class="ri-windows-fill"></i><span>Windows 11</span></button>
+              <button data-set-os="macos" class="os-choice"><i class="ri-apple-fill"></i><span>macOS</span></button>
+              <button data-set-os="chrome" class="os-choice"><i class="ri-chrome-fill"></i><span>ChromeOS</span></button>
             </div>
-
             <h3>Theme</h3>
-
             <div class="theme-picker">
-              <button data-theme="dark">Dark</button>
-              <button data-theme="light">Light</button>
-              <button data-theme="system">System</button>
+              <button data-theme="dark">Dark</button><button data-theme="light">Light</button><button data-theme="system">System</button>
             </div>
-
-            <h3>Accent color</h3>
-            <input type="color" id="accentPicker" value="#6688ff">
-
+            <h3>Accent color</h3><input type="color" id="accentPicker" value="#6688ff">
             <h3>Wallpaper</h3>
-
             <div class="wallpaper-picker">
-
-              <button data-wallpaper="/assets/graphics/wallpapers/default.jpg">
-                <img src="/assets/graphics/wallpapers/default.jpg" alt="Default wallpaper">
-                <span>Default</span>
-              </button>
-
-              <button data-wallpaper="/assets/graphics/wallpapers/dark.jpg">
-                <img src="/assets/graphics/wallpapers/dark.jpg" alt="Dark wallpaper">
-                <span>Dark</span>
-              </button>
-
-              <button data-wallpaper="/assets/graphics/wallpapers/abstract.jpg">
-                <img src="/assets/graphics/wallpapers/abstract.jpg" alt="Abstract wallpaper">
-                <span>Abstract</span>
-              </button>
-
+              <button data-wallpaper="/assets/graphics/wallpapers/default.jpg"><img src="/assets/graphics/wallpapers/default.jpg" alt=""><span>Default</span></button>
+              <button data-wallpaper="/assets/graphics/wallpapers/dark.jpg"><img src="/assets/graphics/wallpapers/dark.jpg" alt=""><span>Dark</span></button>
+              <button data-wallpaper="/assets/graphics/wallpapers/abstract.jpg"><img src="/assets/graphics/wallpapers/abstract.jpg" alt=""><span>Abstract</span></button>
             </div>
-
-            <label class="upload-wallpaper">
-              <i class="ri-upload-2-line"></i>
-              Choose local wallpaper
-              <input type="file" id="wallpaperUpload" accept="image/*">
-            </label>
-
+            <button class="primary-button" id="wallpaperFromFiles"><i class="ri-folder-image-line"></i> Choose image from Files</button>
           </section>
 
-          <!-- PERSONALIZATION -->
           <section class="settings-page" data-page="personalization">
-
-            <h2>Personalization</h2>
-            <p>Customize your local desktop profile.</p>
-
-            <label>
-              Display name
-              <input type="text" id="displayNameInput" maxlength="30" placeholder="User">
-            </label>
-
-            <label>
-              Username
-              <input type="text" id="usernameInput" maxlength="24" placeholder="user">
-            </label>
-
-            <button class="primary-button" id="saveProfile">
-              Save profile
-            </button>
-
+            <h2>Personalization</h2><p>Customize your local desktop profile.</p>
+            <label>Display name<input id="displayNameInput" maxlength="30" placeholder="User"></label>
+            <label>Username<input id="usernameInput" maxlength="24" placeholder="user"></label>
+            <button class="primary-button" id="saveProfile">Save profile</button>
           </section>
 
-          <!-- SYSTEM -->
           <section class="settings-page" data-page="system">
-
-            <h2>System</h2>
-            <p>Basic desktop preferences.</p>
-
-            <label class="setting-switch">
-              <span>Show desktop icons</span>
-              <input type="checkbox" id="desktopIconsToggle" checked>
-            </label>
-
-            <label class="setting-switch">
-              <span>Reduce transparency</span>
-              <input type="checkbox" id="transparencyToggle">
-            </label>
-
-            <label class="setting-switch">
-              <span>Show seconds in clock</span>
-              <input type="checkbox" id="secondsToggle">
-            </label>
-
+            <h2>System</h2><p>Basic desktop preferences.</p>
+            <label class="setting-switch"><span>Show desktop icons</span><input type="checkbox" id="desktopIconsToggle" checked></label>
+            <label class="setting-switch"><span>Reduce transparency</span><input type="checkbox" id="transparencyToggle"></label>
+            <label class="setting-switch"><span>Show seconds in clock</span><input type="checkbox" id="secondsToggle"></label>
             <h3>Startup</h3>
-
-            <label class="setting-switch">
-              <span>Skip animated startup</span>
-              <input type="checkbox" id="skipBootToggle">
-            </label>
-
-            <label class="setting-switch">
-              <span>Require sign-in at startup</span>
-              <input type="checkbox" id="startupLoginToggle">
-            </label>
-
-            <label class="setting-switch">
-              <span>Run startup diagnostics</span>
-              <input type="checkbox" id="bootDiagnosticsToggle" checked>
-            </label>
-
+            <label class="setting-switch"><span>Skip animated startup</span><input type="checkbox" id="skipBootToggle"></label>
+            <label class="setting-switch"><span>Require sign-in at startup</span><input type="checkbox" id="startupLoginToggle"></label>
+            <label class="setting-switch"><span>Run startup diagnostics</span><input type="checkbox" id="bootDiagnosticsToggle" checked></label>
           </section>
 
-          <!-- ABOUT -->
           <section class="settings-page" data-page="about">
-
             <h2>About SecuOS</h2>
-
-            <div class="about-logo">
-              <i class="ri-computer-line"></i>
-            </div>
-
-            <h3>SecuOS</h3>
-            <p>Smaller shell. Bigger possibilities.</p>
-            <p>Version 1.0.0</p>
-            <p>Browser-based desktop environment.</p>
-
+            <div class="about-logo"><i class="ri-computer-line"></i></div>
+            <h3>SecuOS</h3><p>Smaller shell. Bigger possibilities.</p>
+            <p>Version 1.1.0</p><p>Browser-based desktop environment.</p>
           </section>
-
         </div>
       </div>
     </div>
 
-    <!-- =================================================
-         CONTEXT MENU
-    ================================================== -->
-
+    <!-- CONTEXT MENU -->
     <div class="desktop-context floating-panel" id="desktopContext">
-
-      <button id="contextRefresh">
-        <i class="ri-refresh-line"></i>
-        Refresh
-      </button>
-
-      <button id="contextSettings">
-        <i class="ri-settings-3-line"></i>
-        Personalize
-      </button>
-
-      <button id="contextNotifications">
-        <i class="ri-notification-line"></i>
-        Notifications
-      </button>
-
+      <button id="contextRefresh"><i class="ri-refresh-line"></i>Refresh</button>
+      <button id="contextSettings"><i class="ri-settings-3-line"></i>Personalize</button>
+      <button id="contextNotifications"><i class="ri-notification-line"></i>Notifications</button>
     </div>
 
-    <!-- =================================================
-         POWER MENU
-    ================================================== -->
-
+    <!-- POWER MENU -->
     <div class="power-menu floating-panel" id="powerMenu">
-
-      <button data-power="lock">
-        <i class="ri-lock-line"></i>
-        Lock
-      </button>
-
-      <button data-power="sleep">
-        <i class="ri-moon-line"></i>
-        Sleep
-      </button>
-
-      <button data-power="restart">
-        <i class="ri-restart-line"></i>
-        Restart
-      </button>
-
-      <button data-power="shutdown">
-        <i class="ri-shut-down-line"></i>
-        Shut down
-      </button>
-
+      <button data-power="lock"><i class="ri-lock-line"></i>Lock</button>
+      <button data-power="sleep"><i class="ri-moon-line"></i>Sleep</button>
+      <button data-power="restart"><i class="ri-restart-line"></i>Restart</button>
+      <button data-power="shutdown"><i class="ri-shut-down-line"></i>Shut down</button>
     </div>
 
-    <!-- TOASTS -->
     <div class="toast-container" id="toastContainer"></div>
-
   </div>
-
-  <!-- =================================================
-       SLEEP SCREEN
-  ================================================== -->
 
   <div id="secu-sleep-screen">
-
     <div class="sleep-mark">S</div>
-
     <strong>SecuOS is sleeping</strong>
-
     <span>Press any key or click to wake</span>
-
   </div>
 
-  <!-- =================================================
-       DESKTOP SCRIPTS
-  ================================================== -->
-
-  <script src="/js/system-clock.js" defer></script>
-  <script src="/js/window-manager.js" defer></script>
-  <script src="/js/start-menu.js" defer></script>
-  <script src="/js/dock.js" defer></script>
-  <script src="/js/shelf.js" defer></script>
-  <script src="/js/quick-settings.js" defer></script>
-  <script src="/js/notifications.js" defer></script>
-  <script src="/js/desktop-context.js" defer></script>
-  <script src="/js/desktop-settings.js" defer></script>
-  <script src="/js/desktop.js" defer></script>
-
-  <!-- SYSTEM EXPERIENCE -->
-  <script src="/js/system-experience.js" defer></script>
-
-  <!-- BOOT LOADER -->
-  <script src="/js/boot-loader.js"></script>
-
+  <!-- ONE SCRIPT ENTRY POINT -->
+  <script src="/js/global.js" defer></script>
 </body>
 </html>
