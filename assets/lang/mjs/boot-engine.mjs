@@ -8,59 +8,33 @@ import {
     endSession
 } from "./boot-security.mjs";
 
-/* =====================================================
-   CONFIGURATION
-===================================================== */
-
 const CONFIG = {
     name: "SecuOS",
-    version: "1.0.0",
-
+    version: "1.1.0",
     profileKey: "secuos.profile",
     settingsKey: "secuos.settings",
-
     timings: {
-        firmware: 1200,
-        diagnostics: 1300,
-        environment: 1000,
-        welcome: 1300
+        welcome: 700
     }
 };
 
 const STORAGE = {
     skipBoot: "secuos-skip-boot",
     startupLogin: "secuos-startup-login",
-    diagnostics: "secuos-diagnostics",
     os: "secuos-os"
 };
 
-const VALID_OS = [
-    "windows",
-    "macos",
-    "chrome"
-];
-
-/* =====================================================
-   STATE
-===================================================== */
+const VALID_OS = ["windows", "macos", "chrome"];
 
 const state = {
     kernel: null,
     profile: null,
-    diagnostics: null,
-
     root: null,
     desktop: null,
-
     logs: [],
-
     started: false,
     shuttingDown: false
 };
-
-/* =====================================================
-   UTILITIES
-===================================================== */
 
 function escapeHTML(value) {
     return String(value ?? "").replace(/[&<>"']/g, char => ({
@@ -80,38 +54,17 @@ function storageGet(key, fallback = null) {
     }
 }
 
-function storageSet(key, value) {
-    try {
-        localStorage.setItem(key, String(value));
-        return true;
-    } catch {
-        return false;
-    }
-}
-
-function isEnabled(key, defaultValue = true) {
+function isEnabled(key, fallback = true) {
     const value = storageGet(key);
-
-    if (value === null) {
-        return defaultValue;
-    }
-
-    return value === "true";
+    return value === null ? fallback : value === "true";
 }
 
 function getOS() {
-    const savedOS = storageGet(STORAGE.os);
+    const saved = storageGet(STORAGE.os);
+    const current = document.documentElement.dataset.os;
 
-    const documentOS =
-        document.documentElement.dataset.os;
-
-    if (VALID_OS.includes(savedOS)) {
-        return savedOS;
-    }
-
-    if (VALID_OS.includes(documentOS)) {
-        return documentOS;
-    }
+    if (VALID_OS.includes(saved)) return saved;
+    if (VALID_OS.includes(current)) return current;
 
     return "windows";
 }
@@ -147,33 +100,11 @@ function log(message) {
     );
 }
 
-/* =====================================================
-   BOOT OVERLAY
-===================================================== */
-
-function logo() {
-    return `
-        <div class="secu-boot-logo">
-            <span>S</span>
-        </div>
-    `;
-}
-
-function footer() {
-    return `
-        <div class="secu-boot-footer">
-            SECUOS ${CONFIG.version}
-            <span> · </span>
-            SYSTEM ENVIRONMENT
-        </div>
-    `;
-}
-
 function ensureOverlay() {
     if (state.root?.isConnected) {
         state.root.style.display = "flex";
         state.root.dataset.os = getOS();
-        return state.root;
+        return;
     }
 
     const root = document.createElement("div");
@@ -188,10 +119,18 @@ function ensureOverlay() {
     `;
 
     document.body.appendChild(root);
-
     state.root = root;
+}
 
-    return root;
+function showOverlay() {
+    ensureOverlay();
+    state.root.style.display = "flex";
+    state.root.dataset.os = getOS();
+}
+
+function hideOverlay() {
+    state.root?.remove();
+    state.root = null;
 }
 
 function render(content) {
@@ -199,103 +138,36 @@ function render(content) {
         ".secu-boot-content"
     );
 
-    if (container) {
-        container.innerHTML = content;
-    }
+    if (container) container.innerHTML = content;
 }
 
-function showOverlay() {
-    ensureOverlay();
-
-    state.root.style.display = "flex";
-    state.root.dataset.os = getOS();
-}
-
-function hideOverlay() {
-    if (state.root) {
-        state.root.remove();
-        state.root = null;
-    }
-}
-
-/* =====================================================
-   PROGRESS UI
-===================================================== */
-
-function progressView(title, description, label) {
-    render(`
-        ${logo()}
-
-        <h1 class="secu-boot-title">
-            ${escapeHTML(title)}
-        </h1>
-
-        <p class="secu-boot-description">
-            ${escapeHTML(description)}
-        </p>
-
-        <div class="secu-boot-progress">
-            <div
-                class="secu-boot-progress-fill"
-                id="secu-progress-fill"
-            ></div>
+function logo() {
+    return `
+        <div class="secu-boot-logo">
+            <span>S</span>
         </div>
+    `;
+}
 
-        <div class="secu-boot-status">
-            <span id="secu-progress-label">
-                ${escapeHTML(label)}
-            </span>
-
-            <span id="secu-progress-number">0%</span>
+function footer() {
+    return `
+        <div class="secu-boot-footer">
+            SECUOS ${CONFIG.version}
         </div>
-
-        ${footer()}
-    `);
+    `;
 }
 
-async function runProgress(duration, label) {
-    await BootEffects.progress(value => {
-        const fill = document.getElementById(
-            "secu-progress-fill"
-        );
+/* ================================================
+   TYPESCRIPT BOOT KERNEL
+================================================ */
 
-        const number = document.getElementById(
-            "secu-progress-number"
-        );
-
-        const status = document.getElementById(
-            "secu-progress-label"
-        );
-
-        if (fill) {
-            fill.style.width = `${value}%`;
-        }
-
-        if (number) {
-            number.textContent = `${value}%`;
-        }
-
-        if (status) {
-            status.textContent = label;
-        }
-    }, duration);
-}
-
-/* =====================================================
-   TYPESCRIPT KERNEL
-===================================================== */
-
-async function loadTypeScriptKernel() {
-    log("Loading TypeScript boot kernel.");
-
+async function loadKernel() {
     const response = await fetch(
         "/assets/lang/ts/boot-kernel.ts"
     );
 
     if (!response.ok) {
-        throw new Error(
-            "Could not load boot-kernel.ts."
-        );
+        throw new Error("Could not load boot-kernel.ts.");
     }
 
     const source = await response.text();
@@ -308,38 +180,30 @@ async function loadTypeScriptKernel() {
                 "https://cdn.jsdelivr.net/npm/typescript@5.8.3/lib/typescript.js";
 
             script.onload = resolve;
-
             script.onerror = () => reject(
-                new Error(
-                    "TypeScript compiler failed to load."
-                )
+                new Error("TypeScript compiler failed to load.")
             );
 
             document.head.appendChild(script);
         });
     }
 
-    const compiled = window.ts.transpileModule(
-        source,
-        {
-            compilerOptions: {
-                target: window.ts.ScriptTarget.ES2020,
-                module: window.ts.ModuleKind.ES2020
-            }
+    const compiled = window.ts.transpileModule(source, {
+        compilerOptions: {
+            target: window.ts.ScriptTarget.ES2020,
+            module: window.ts.ModuleKind.ES2020
         }
-    );
+    });
 
     const blob = new Blob(
         [compiled.outputText],
-        {
-            type: "text/javascript"
-        }
+        { type: "text/javascript" }
     );
 
-    const moduleURL = URL.createObjectURL(blob);
+    const url = URL.createObjectURL(blob);
 
     try {
-        const module = await import(moduleURL);
+        const module = await import(url);
 
         state.kernel = new module.BootKernel(CONFIG);
 
@@ -347,235 +211,102 @@ async function loadTypeScriptKernel() {
             log(`Boot stage changed: ${stage}`);
         });
     } finally {
-        URL.revokeObjectURL(moduleURL);
+        URL.revokeObjectURL(url);
     }
-
-    log("TypeScript kernel initialized.");
 }
 
-/* =====================================================
-   FIRMWARE
-===================================================== */
+/* ================================================
+   INTRO VIDEO
+================================================ */
 
-async function runFirmware() {
-    state.kernel.transition("firmware");
+function playIntroVideo() {
+    return new Promise(resolve => {
+        showOverlay();
 
-    log("Firmware initialization started.");
+        state.root.classList.add("secu-boot-intro");
 
-    progressView(
-        "SecuOS",
-        "Initializing your system environment.",
-        "Starting firmware"
-    );
+        const container = state.root.querySelector(
+            ".secu-boot-content"
+        );
 
-    await runProgress(
-        CONFIG.timings.firmware,
-        "Firmware initialized"
-    );
+        container.innerHTML = `
+            <video
+                class="secu-boot-video"
+                src="/assets/graphics/v/intro.mp4"
+                autoplay
+                muted
+                playsinline
+                preload="auto"
+            ></video>
 
-    log("Firmware initialization completed.");
-}
+            <div class="secu-boot-skip-hint">
+                Double-press Enter to skip
+            </div>
+        `;
 
-/* =====================================================
-   PYTHON DIAGNOSTICS
-===================================================== */
+        const video = container.querySelector("video");
 
-async function loadPythonRuntime() {
-    if (!window.loadPyodide) {
-        await new Promise((resolve, reject) => {
-            const script = document.createElement("script");
+        let finished = false;
+        let lastEnter = 0;
 
-            script.src =
-                "https://cdn.jsdelivr.net/pyodide/v0.27.7/full/pyodide.js";
+        const finish = () => {
+            if (finished) return;
 
-            script.onload = resolve;
+            finished = true;
 
-            script.onerror = () => reject(
-                new Error(
-                    "Python runtime failed to load."
-                )
+            clearTimeout(fallback);
+
+            document.removeEventListener(
+                "keydown",
+                onKeyDown,
+                true
             );
 
-            document.head.appendChild(script);
+            state.root?.classList.remove("secu-boot-intro");
+
+            resolve();
+        };
+
+        const onKeyDown = event => {
+            if (event.key !== "Enter") return;
+
+            event.preventDefault();
+            event.stopPropagation();
+
+            const now = Date.now();
+
+            if (now - lastEnter <= 700) {
+                finish();
+            } else {
+                lastEnter = now;
+            }
+        };
+
+        const fallback = setTimeout(finish, 7600);
+
+        video.addEventListener("ended", finish, {
+            once: true
         });
-    }
 
-    return await window.loadPyodide();
-}
+        video.addEventListener("error", finish, {
+            once: true
+        });
 
-async function runPythonDiagnostics() {
-    state.kernel.transition("diagnostics");
-
-    log("Starting Python diagnostics.");
-
-    progressView(
-        "System diagnostics",
-        "Inspecting the browser environment.",
-        "Loading Python runtime"
-    );
-
-    const pyodide = await loadPythonRuntime();
-
-    const response = await fetch(
-        "/assets/lang/py/diagnostics.py"
-    );
-
-    if (!response.ok) {
-        throw new Error(
-            "Could not load diagnostics.py."
+        document.addEventListener(
+            "keydown",
+            onKeyDown,
+            true
         );
-    }
 
-    const source = await response.text();
-
-    const result = await pyodide.runPythonAsync(source);
-
-    state.diagnostics = JSON.parse(result);
-
-    for (const item of state.diagnostics.results) {
-        state.kernel.addDiagnostic(item);
-
-        log(
-            `${item.name}: ${
-                item.passed ? "PASSED" : "FAILED"
-            }`
-        );
-    }
-
-    window.SecuOSDiagnostics = state.diagnostics;
-
-    log("Python diagnostics completed.");
-
-    renderDiagnostics();
-
-    await BootEffects.sleep(
-        CONFIG.timings.diagnostics
-    );
-
-    if (!state.kernel.canContinue()) {
-        throw new Error(
-            "A critical environment check failed."
-        );
-    }
-}
-
-/* =====================================================
-   DIAGNOSTICS DISPLAY
-===================================================== */
-
-function renderDiagnostics() {
-    const results =
-        state.diagnostics?.results || [];
-
-    render(`
-        ${logo()}
-
-        <h1 class="secu-boot-title">
-            System diagnostics
-        </h1>
-
-        <p class="secu-boot-description">
-            Checking your browser and desktop environment.
-        </p>
-
-        <div class="secu-boot-checks">
-            ${results.map(item => `
-                <div class="secu-boot-check">
-
-                    <span>
-                        ${escapeHTML(item.name)}
-                    </span>
-
-                    <span>
-                        ${item.passed
-                            ? '<i class="ri-check-line"></i>'
-                            : '<i class="ri-alert-line"></i>'}
-                    </span>
-
-                </div>
-            `).join("")}
-        </div>
-
-        <div class="secu-boot-footer">
-            PYTHON DIAGNOSTICS ·
-            ${results.filter(item => item.passed).length}
-            / ${results.length} PASSED
-        </div>
-    `);
-}
-
-function renderDiagnosticsPage() {
-    const results =
-        state.diagnostics?.results || [];
-
-    render(`
-        ${logo()}
-
-        <h1 class="secu-boot-title">
-            System report
-        </h1>
-
-        <p class="secu-boot-description">
-            SecuOS environment diagnostics.
-        </p>
-
-        <div class="secu-boot-checks">
-            ${results.map(item => `
-                <div class="secu-boot-check">
-                    <span>${escapeHTML(item.name)}</span>
-
-                    <span>
-                        ${item.passed
-                            ? '<i class="ri-check-line"></i>'
-                            : '<i class="ri-alert-line"></i>'}
-                    </span>
-                </div>
-            `).join("")}
-        </div>
-
-        <button
-            class="secu-boot-button"
-            id="secu-diagnostics-close"
-        >
-            Close
-        </button>
-
-        ${footer()}
-    `);
-
-    document.getElementById(
-        "secu-diagnostics-close"
-    )?.addEventListener("click", () => {
-        if (state.profile?.passwordHash &&
-            isEnabled(STORAGE.startupLogin, true)) {
-            renderLogin();
-        } else {
-            renderWelcome({
-                fast: true
-            });
-        }
+        video.play().catch(finish);
     });
 }
 
-/* =====================================================
+/* ================================================
    DESKTOP ENVIRONMENT
-===================================================== */
+================================================ */
 
-async function loadEnvironment({
-    animate = true
-} = {}) {
-    state.kernel.transition("environment");
-
-    log("Preparing desktop environment.");
-
-    if (animate) {
-        progressView(
-            "Preparing your system",
-            "Restoring your preferences and workspace.",
-            "Loading preferences"
-        );
-    }
-
+async function loadEnvironment() {
     let settings = {};
 
     try {
@@ -588,62 +319,16 @@ async function loadEnvironment({
 
     window.SecuOSSettings = settings;
 
-    if (animate) {
-        await runProgress(
-            CONFIG.timings.environment,
-            "Environment ready"
-        );
-    }
-
     log("Desktop environment prepared.");
 }
 
-/* =====================================================
-   PROFILE ROUTING
-===================================================== */
-
-function routeToProfile() {
-    state.profile = getProfile();
-
-    log(
-        state.profile
-            ? "Existing profile discovered."
-            : "No existing profile found."
-    );
-
-    if (!state.profile) {
-        renderSetup();
-        return;
-    }
-
-    const requireLogin = isEnabled(
-        STORAGE.startupLogin,
-        true
-    );
-
-    if (
-        state.profile.passwordHash &&
-        requireLogin
-    ) {
-        renderLogin();
-        return;
-    }
-
-    renderWelcome({
-        fast: isEnabled(STORAGE.skipBoot, false)
-    });
-}
-
-/* =====================================================
+/* ================================================
    PROFILE SETUP
-===================================================== */
+================================================ */
 
 function renderSetup() {
     state.kernel.transition("setup");
-
     state.root.dataset.os = getOS();
-
-    log("First-time profile setup opened.");
 
     render(`
         ${logo()}
@@ -653,7 +338,7 @@ function renderSetup() {
         </h1>
 
         <p class="secu-boot-description">
-            Set up your personal SecuOS environment.
+            Set up your SecuOS account.
         </p>
 
         <input
@@ -661,7 +346,6 @@ function renderSetup() {
             id="secu-display-name"
             placeholder="Display name"
             maxlength="40"
-            autocomplete="name"
         >
 
         <input
@@ -669,7 +353,6 @@ function renderSetup() {
             id="secu-username"
             placeholder="Username"
             maxlength="24"
-            autocomplete="username"
         >
 
         <input
@@ -677,15 +360,11 @@ function renderSetup() {
             id="secu-password"
             type="password"
             placeholder="Password (optional)"
-            autocomplete="new-password"
         >
 
         <p class="secu-boot-error" id="secu-setup-error"></p>
 
-        <button
-            class="secu-boot-button"
-            id="secu-create-profile"
-        >
+        <button class="secu-boot-button" id="secu-create-profile">
             Create profile
         </button>
 
@@ -693,24 +372,12 @@ function renderSetup() {
     `);
 
     const submit = async () => {
-        const displayName = document.getElementById(
-            "secu-display-name"
-        ).value.trim();
-
-        const username = document.getElementById(
-            "secu-username"
-        ).value.trim();
-
-        const password = document.getElementById(
-            "secu-password"
-        ).value;
+        const button = document.getElementById(
+            "secu-create-profile"
+        );
 
         const error = document.getElementById(
             "secu-setup-error"
-        );
-
-        const button = document.getElementById(
-            "secu-create-profile"
         );
 
         button.disabled = true;
@@ -718,16 +385,18 @@ function renderSetup() {
 
         try {
             state.profile = await createProfile({
-                displayName,
-                username,
-                password
+                displayName: document.getElementById(
+                    "secu-display-name"
+                ).value,
+                username: document.getElementById(
+                    "secu-username"
+                ).value,
+                password: document.getElementById(
+                    "secu-password"
+                ).value
             });
 
-            log("Profile created successfully.");
-
-            renderWelcome({
-                fast: false
-            });
+            renderWelcome();
         } catch (exception) {
             error.textContent = exception.message;
             button.disabled = false;
@@ -741,26 +410,20 @@ function renderSetup() {
     document.getElementById(
         "secu-password"
     ).addEventListener("keydown", event => {
-        if (event.key === "Enter") {
-            submit();
-        }
+        if (event.key === "Enter") submit();
     });
 }
 
-/* =====================================================
-   LOGIN
-===================================================== */
+/* ================================================
+   OS-SPECIFIC LOGIN
+================================================ */
 
 function renderLogin() {
     state.kernel.transition("login");
 
     state.root.dataset.os = getOS();
 
-    log("Login screen opened.");
-
-    if (!state.profile) {
-        state.profile = getProfile();
-    }
+    state.profile = getProfile();
 
     if (!state.profile) {
         renderSetup();
@@ -768,51 +431,100 @@ function renderLogin() {
     }
 
     if (!state.profile.passwordHash) {
-        renderWelcome({
-            fast: true
-        });
+        renderWelcome();
         return;
     }
 
-    const avatar = state.profile.avatar ||
-        getInitials(state.profile.displayName);
+    const os = getOS();
+
+    const avatar = state.profile.avatarDataUrl
+        ? `<img class="secu-login-avatar-image"
+                src="${state.profile.avatarDataUrl}" alt="">`
+        : `<div class="secu-login-avatar-fallback">
+                ${escapeHTML(state.profile.avatar)}
+           </div>`;
+
+    const title = os === "macos"
+        ? "Enter your password"
+        : os === "chrome"
+            ? "Sign in to SecuOS"
+            : "Welcome back";
 
     render(`
-        <div class="secu-boot-avatar">
-            ${escapeHTML(avatar)}
-        </div>
+        <section class="secu-login-screen secu-login-${os}">
 
-        <h1 class="secu-boot-title">
-            Welcome back
-        </h1>
+            <div class="secu-login-brand">
+                <span class="secu-login-brand-mark">S</span>
+                <span>SecuOS</span>
+            </div>
 
-        <p class="secu-boot-description">
-            ${escapeHTML(state.profile.displayName)}
-            <br>
-            @${escapeHTML(state.profile.username)}
-        </p>
+            <div class="secu-login-card">
 
-        <input
-            class="secu-boot-field"
-            id="secu-login-password"
-            type="password"
-            placeholder="Enter your password"
-            autocomplete="current-password"
-        >
+                ${avatar}
 
-        <p class="secu-boot-error" id="secu-login-error"></p>
+                <h1 class="secu-login-title">
+                    ${title}
+                </h1>
 
-        <button
-            class="secu-boot-button"
-            id="secu-login-submit"
-        >
-            Sign in
-        </button>
+                <p class="secu-login-name">
+                    ${escapeHTML(state.profile.displayName)}
+                </p>
 
-        ${footer()}
+                <label class="secu-login-label"
+                    for="secu-login-username">
+                    Username
+                </label>
+
+                <input
+                    class="secu-boot-field secu-login-input"
+                    id="secu-login-username"
+                    value="${escapeHTML(state.profile.username)}"
+                    autocomplete="username"
+                >
+
+                <label class="secu-login-label"
+                    for="secu-login-password">
+                    Password
+                </label>
+
+                <input
+                    class="secu-boot-field secu-login-input"
+                    id="secu-login-password"
+                    type="password"
+                    placeholder="Enter your password"
+                    autocomplete="current-password"
+                >
+
+                <p class="secu-boot-error"
+                    id="secu-login-error"></p>
+
+                <button
+                    class="secu-boot-button secu-login-submit"
+                    id="secu-login-submit">
+                    ${os === "macos"
+                        ? "Unlock"
+                        : os === "chrome"
+                            ? "Sign in"
+                            : "Sign in"}
+                </button>
+
+            </div>
+
+            <div class="secu-login-footer">
+                ${os === "macos"
+                    ? "Touch ID is unavailable in this browser"
+                    : os === "chrome"
+                        ? "SecuOS local account"
+                        : "SecuOS · Local account"}
+            </div>
+        </section>
     `);
 
-    const input = document.getElementById(
+    const username = document.getElementById(
+        "secu-login-username"
+    );
+
+    const password = document.getElementById(
         "secu-login-password"
     );
 
@@ -828,24 +540,28 @@ function renderLogin() {
         button.disabled = true;
         error.textContent = "";
 
+        if (
+            username.value.trim().toLowerCase() !==
+            String(state.profile.username).toLowerCase()
+        ) {
+            error.textContent = "Incorrect username.";
+            username.focus();
+            button.disabled = false;
+            return;
+        }
+
         try {
-            const valid = await verifyPassword(
-                input.value
-            );
+            const valid = await verifyPassword(password.value);
 
             if (!valid) {
-                error.textContent =
-                    "Incorrect password.";
-
-                input.value = "";
-                input.focus();
+                error.textContent = "Incorrect password.";
+                password.value = "";
+                password.focus();
                 button.disabled = false;
                 return;
             }
 
-            renderWelcome({
-                fast: false
-            });
+            renderWelcome();
         } catch (exception) {
             error.textContent = exception.message;
             button.disabled = false;
@@ -854,22 +570,18 @@ function renderLogin() {
 
     button.addEventListener("click", submit);
 
-    input.addEventListener("keydown", event => {
-        if (event.key === "Enter") {
-            submit();
-        }
+    password.addEventListener("keydown", event => {
+        if (event.key === "Enter") submit();
     });
 
-    input.focus();
+    password.focus();
 }
 
-/* =====================================================
-   WELCOME
-===================================================== */
+/* ================================================
+   WELCOME / ENTRY SCREEN
+================================================ */
 
-async function renderWelcome({
-    fast = false
-} = {}) {
+function renderWelcome() {
     state.kernel.transition("welcome");
 
     state.profile = getProfile() || state.profile;
@@ -881,60 +593,71 @@ async function renderWelcome({
 
     startSession();
 
-    log("User session established.");
-
-    if (fast) {
-        enterDesktop();
-        return;
-    }
+    const os = getOS();
 
     render(`
-        ${logo()}
+        <section class="secu-entry-screen secu-entry-${os}">
 
-        <div class="secu-boot-spinner"></div>
+            <div class="secu-entry-mark">S</div>
 
-        <h1 class="secu-boot-title">
-            Welcome, ${escapeHTML(state.profile.displayName)}.
-        </h1>
+            <p class="secu-entry-eyebrow">
+                SECUOS
+            </p>
 
-        <p class="secu-boot-description">
-            Your desktop is being prepared.
-        </p>
+            <h1 class="secu-entry-title">
+                Welcome, ${escapeHTML(state.profile.displayName)}
+            </h1>
 
-        <div class="secu-boot-progress">
-            <div
-                class="secu-boot-progress-fill"
-                id="secu-welcome-progress"
-            ></div>
-        </div>
+            <p class="secu-entry-description">
+                Your desktop is ready.
+            </p>
 
-        ${footer()}
+            <button
+                class="secu-entry-button"
+                id="secu-enter-desktop">
+                Enter desktop <span>↵</span>
+            </button>
+
+            <p class="secu-entry-hint">
+                Press Enter to continue
+            </p>
+
+        </section>
     `);
 
-    await BootEffects.progress(value => {
-        const fill = document.getElementById(
-            "secu-welcome-progress"
+    const enter = () => {
+        document.removeEventListener(
+            "keydown",
+            onEnter,
+            true
         );
 
-        if (fill) {
-            fill.style.width = `${value}%`;
-        }
-    }, CONFIG.timings.welcome);
+        enterDesktop();
+    };
 
-    enterDesktop();
+    const onEnter = event => {
+        if (event.key !== "Enter") return;
+
+        event.preventDefault();
+        enter();
+    };
+
+    document.getElementById(
+        "secu-enter-desktop"
+    ).addEventListener("click", enter);
+
+    document.addEventListener(
+        "keydown",
+        onEnter,
+        true
+    );
 }
 
-/* =====================================================
+/* ================================================
    DESKTOP ENTRY
-===================================================== */
+================================================ */
 
 function enterDesktop() {
-    if (!state.kernel) {
-        throw new Error(
-            "The TypeScript boot kernel is not initialized."
-        );
-    }
-
     state.kernel.complete();
 
     log("SecuOS desktop is ready.");
@@ -957,56 +680,33 @@ function enterDesktop() {
     );
 }
 
-/* =====================================================
-   LOCK
-===================================================== */
+/* ================================================
+   LOCK / POWER
+================================================ */
 
 function lock() {
-    if (!state.profile) {
-        return;
-    }
-
-    log("Desktop locked.");
+    if (!state.profile) return;
 
     endSession();
 
-    if (state.desktop) {
-        state.desktop.style.display = "none";
-    }
+    state.desktop.style.display = "none";
 
     showOverlay();
-
-    state.kernel.transition("locked");
-
     renderLogin();
 }
 
-/* =====================================================
-   RESTART AND SHUTDOWN
-===================================================== */
-
 function powerScreen(mode) {
-    if (state.shuttingDown) {
-        return;
-    }
+    if (state.shuttingDown) return;
 
     state.shuttingDown = true;
+
+    endSession();
+
+    state.desktop.style.display = "none";
 
     showOverlay();
 
     state.kernel.transition("shutdown");
-
-    endSession();
-
-    if (state.desktop) {
-        state.desktop.style.display = "none";
-    }
-
-    log(
-        mode === "restart"
-            ? "Restart requested."
-            : "Shutdown requested."
-    );
 
     render(`
         ${logo()}
@@ -1019,11 +719,7 @@ function powerScreen(mode) {
                 : "Shutting down"}
         </h1>
 
-        <p class="secu-boot-description">
-            ${mode === "restart"
-                ? "Preparing a fresh system session."
-                : "Your session is ending."}
-        </p>
+        ${footer()}
     `);
 
     setTimeout(() => {
@@ -1039,95 +735,34 @@ function powerScreen(mode) {
                 SecuOS is off
             </h1>
 
-            <p class="secu-boot-description">
-                Your system has shut down.
-            </p>
-
             <button
                 class="secu-boot-button"
-                id="secu-power-on"
-            >
+                id="secu-power-on">
                 Power on
             </button>
-
-            ${footer()}
         `);
 
         state.shuttingDown = false;
 
         document.getElementById(
             "secu-power-on"
-        )?.addEventListener("click", () => {
-            location.reload();
-        });
-    }, 1100);
+        )?.addEventListener("click", () => location.reload());
+    }, 1000);
 }
 
-/* =====================================================
-   ERROR HANDLING
-===================================================== */
-
-function showError(error) {
-    console.error(
-        "[SecuOS Boot]",
-        error
-    );
-
-    log(`Startup error: ${error.message}`);
-
-    showOverlay();
-
-    if (state.kernel) {
-        state.kernel.fail(error.message);
-    }
-
-    render(`
-        ${logo()}
-
-        <h1 class="secu-boot-title">
-            Startup interrupted
-        </h1>
-
-        <p class="secu-boot-description">
-            ${escapeHTML(error.message)}
-        </p>
-
-        <button
-            class="secu-boot-button"
-            id="secu-retry"
-        >
-            Retry startup
-        </button>
-
-        ${footer()}
-    `);
-
-    document.getElementById(
-        "secu-retry"
-    )?.addEventListener("click", () => {
-        location.reload();
-    });
-}
-
-/* =====================================================
+/* ================================================
    STARTUP
-===================================================== */
+================================================ */
 
 async function start() {
-    if (state.started) {
-        return;
-    }
+    if (state.started) return;
 
     state.started = true;
 
-    state.desktop = document.querySelector(
-        "#desktop"
-    );
+    state.desktop = document.querySelector("#desktop");
 
     if (!state.desktop) {
-        throw new Error(
-            "Missing #desktop. Check main.html."
-        );
+        throw new Error("Missing #desktop.");
     }
 
     const savedOS = storageGet(STORAGE.os);
@@ -1141,65 +776,60 @@ async function start() {
     showOverlay();
 
     try {
-        // The TypeScript kernel is always initialized.
-        await loadTypeScriptKernel();
+        await loadKernel();
 
-        const skipBoot = isEnabled(
-            STORAGE.skipBoot,
-            false
-        );
-
-        const runDiagnostics = isEnabled(
-            STORAGE.diagnostics,
-            true
-        );
-
-        if (skipBoot) {
-            log("Fast startup enabled.");
-            log("Skipping animated firmware sequence.");
-
-            await loadEnvironment({
-                animate: false
-            });
-
+        if (!isEnabled(STORAGE.skipBoot, false)) {
+            log("Playing SecuOS intro video.");
+            await playIntroVideo();
         } else {
-            await runFirmware();
-
-            if (runDiagnostics) {
-                try {
-                    await runPythonDiagnostics();
-                } catch (diagnosticError) {
-                    log(
-                        "Diagnostics unavailable: " +
-                        diagnosticError.message
-                    );
-
-                    state.diagnostics = {
-                        results: [],
-                        warning: diagnosticError.message
-                    };
-                }
-            } else {
-                log("Python diagnostics disabled.");
-            }
-
-            await loadEnvironment({
-                animate: true
-            });
+            log("Intro video skipped.");
         }
+
+        await loadEnvironment();
 
         state.profile = getProfile();
 
-        routeToProfile();
+        if (!state.profile) {
+            renderSetup();
+            return;
+        }
 
+        if (
+            state.profile.passwordHash &&
+            isEnabled(STORAGE.startupLogin, true)
+        ) {
+            renderLogin();
+        } else {
+            renderWelcome();
+        }
     } catch (error) {
-        showError(error);
+        console.error("[SecuOS Boot]", error);
+
+        showOverlay();
+
+        render(`
+            ${logo()}
+
+            <h1 class="secu-boot-title">
+                Startup interrupted
+            </h1>
+
+            <p class="secu-boot-description">
+                ${escapeHTML(error.message)}
+            </p>
+
+            <button
+                class="secu-boot-button"
+                onclick="location.reload()">
+                Retry startup
+            </button>
+        `);
     }
 }
 
-/* =====================================================
+/* ================================================
    PUBLIC API
-===================================================== */
+================================================ */
 
 window.SecuOSBoot = {
     start,
@@ -1216,24 +846,12 @@ window.SecuOSBoot = {
         powerScreen("shutdown");
     },
 
-    showDiagnostics() {
-        if (!state.root?.isConnected) {
-            showOverlay();
-        }
-
-        renderDiagnosticsPage();
-    },
-
     get profile() {
         return state.profile;
     },
 
     get stage() {
         return state.kernel?.stage || "initializing";
-    },
-
-    get diagnostics() {
-        return state.diagnostics;
     },
 
     get logs() {
@@ -1244,9 +862,5 @@ window.SecuOSBoot = {
         return state.kernel?.getReport() || null;
     }
 };
-
-/* =====================================================
-   INITIALIZE
-===================================================== */
 
 start();
