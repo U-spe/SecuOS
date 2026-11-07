@@ -1,410 +1,615 @@
-(() => {
-  "use strict";
+:root {
+    --secu-boot-bg: #08090d;
+    --secu-boot-text: #f5f6fa;
+    --secu-boot-muted: #9299a8;
+    --secu-boot-accent: #8195ff;
+    --secu-boot-border: #ffffff18;
+}
 
-  const root = document.documentElement;
-  const wallpaper = document.querySelector(".wallpaper");
+#secu-boot {
+    position: fixed;
+    inset: 0;
+    z-index: 999999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: auto;
+    color: var(--secu-boot-text);
+    background: var(--secu-boot-bg);
+    font-family: Inter, "Segoe UI", sans-serif;
+}
 
-  const storage = {
-    get(key, fallback = "") {
-      try {
-        return localStorage.getItem(`secuos-${key}`) ?? fallback;
-      } catch {
-        return fallback;
-      }
-    },
+#secu-boot *,
+#secu-boot *::before,
+#secu-boot *::after {
+    box-sizing: border-box;
+}
 
-    set(key, value) {
-      try {
-        localStorage.setItem(`secuos-${key}`, value);
-      } catch {
-        window.SecuDesktop?.notify(
-          "Storage unavailable",
-          "Your browser could not save this preference."
-        );
-      }
+.secu-boot-background {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+        radial-gradient(ellipse at 50% 38%, #28375485, transparent 55%),
+        radial-gradient(ellipse at 10% 90%, #222b4555, transparent 45%);
+}
+
+.secu-boot-grid {
+    position: absolute;
+    inset: 0;
+    opacity: .11;
+    pointer-events: none;
+    background-image:
+        linear-gradient(#ffffff12 1px, transparent 1px),
+        linear-gradient(90deg, #ffffff12 1px, transparent 1px);
+    background-size: 48px 48px;
+    mask-image: linear-gradient(to bottom, black, transparent 85%);
+}
+
+.secu-boot-content {
+    position: relative;
+    z-index: 2;
+    width: min(440px, calc(100% - 36px));
+    margin: auto;
+    padding: 30px 0;
+    text-align: center;
+    animation: secu-boot-appear .5s ease both;
+}
+
+.secu-boot-logo {
+    width: 82px;
+    height: 82px;
+    display: grid;
+    place-items: center;
+    margin: 0 auto 27px;
+    border: 1px solid #ffffff25;
+    border-radius: 25px;
+    background: linear-gradient(145deg, #30394b, #11151e);
+    box-shadow: 0 18px 65px #0009, inset 0 1px #ffffff25;
+    font-size: 36px;
+    font-weight: 800;
+    letter-spacing: -4px;
+}
+
+.secu-boot-title {
+    margin: 0;
+    font-size: 29px;
+    font-weight: 650;
+    letter-spacing: -1.1px;
+}
+
+.secu-boot-description {
+    margin: 11px 0 26px;
+    color: var(--secu-boot-muted);
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+.secu-boot-button {
+    width: 100%;
+    padding: 14px 18px;
+    border: 1px solid transparent;
+    border-radius: 12px;
+    background: #f1f2f6;
+    color: #101116;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform .2s ease, background .2s ease;
+}
+
+.secu-boot-button:hover {
+    transform: translateY(-2px);
+    background: white;
+}
+
+.secu-boot-button:active {
+    transform: scale(.985);
+}
+
+.secu-boot-field {
+    width: 100%;
+    padding: 14px 15px;
+    margin-bottom: 12px;
+    border: 1px solid var(--secu-boot-border);
+    border-radius: 11px;
+    outline: none;
+    background: #ffffff09;
+    color: white;
+    font-family: inherit;
+    font-size: 13px;
+}
+
+.secu-boot-field:focus {
+    border-color: var(--secu-boot-accent);
+    box-shadow: 0 0 0 3px #8195ff20;
+}
+
+.secu-boot-error {
+    min-height: 18px;
+    margin: 0 0 12px;
+    color: #ff9292;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.secu-boot-footer {
+    margin-top: 28px;
+    color: #707887;
+    font-family: monospace;
+    font-size: 10px;
+    letter-spacing: .5px;
+}
+
+.secu-boot-spinner {
+    width: 30px;
+    height: 30px;
+    margin: 0 auto 22px;
+    border: 2px solid #ffffff20;
+    border-top-color: var(--secu-boot-accent);
+    border-radius: 50%;
+    animation: secu-boot-spin .8s linear infinite;
+}
+
+@keyframes secu-boot-spin {
+    to { transform: rotate(360deg); }
+}
+
+@keyframes secu-boot-appear {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
     }
-  };
 
-  function getProfile() {
-    try {
-      return JSON.parse(
-        localStorage.getItem("secuos.profile") || "null"
-      );
-    } catch {
-      return null;
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
-  }
+}
 
-  function updateAvatarImages(src) {
-    document.querySelectorAll(
-      ".settings-profile img, .profile-small img, #profileAvatarPreview"
-    ).forEach(image => {
-      image.src = src;
-    });
-  }
+/* INTRO VIDEO */
 
-  function currentAvatar() {
-    const profile = getProfile();
+#secu-boot.secu-boot-intro {
+    padding: 0;
+    overflow: hidden;
+    background: #000;
+}
 
-    return profile?.avatarDataUrl ||
-      "/assets/graphics/avatars/default.png";
-  }
+#secu-boot.secu-boot-intro .secu-boot-background,
+#secu-boot.secu-boot-intro .secu-boot-grid {
+    display: none;
+}
 
-  function setOS(os) {
-    if (!["windows", "macos", "chrome"].includes(os)) return;
+#secu-boot.secu-boot-intro .secu-boot-content {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    animation: none;
+}
 
-    root.dataset.os = os;
-    storage.set("os", os);
+.secu-boot-video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    background: #000;
+}
 
-    document.querySelectorAll("[data-set-os]").forEach(button => {
-      button.classList.toggle(
-        "active",
-        button.dataset.setOs === os
-      );
-    });
+.secu-boot-skip-hint {
+    position: absolute;
+    right: 24px;
+    bottom: 24px;
+    padding: 10px 14px;
+    border: 1px solid #ffffff38;
+    border-radius: 999px;
+    background: #0008;
+    color: #fff;
+    font: 12px/1.2 "Segoe UI", sans-serif;
+    backdrop-filter: blur(12px);
+}
 
-    window.SecuDesktop?.notify(
-      "Desktop style changed",
-      `Your desktop now uses ${
-        os === "macos" ? "macOS" :
-        os === "chrome" ? "ChromeOS" : "Windows 11"
-      }.`
+/* LOGIN LAYOUT */
+
+.secu-login-screen,
+.secu-entry-screen {
+    width: 100%;
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 34px 22px;
+    text-align: center;
+    color: #f8f9ff;
+}
+
+.secu-login-brand {
+    position: absolute;
+    top: 28px;
+    left: 32px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #ffffffd9;
+    font-size: 13px;
+    font-weight: 650;
+}
+
+.secu-login-brand-mark,
+.secu-entry-mark {
+    width: 34px;
+    height: 34px;
+    display: grid;
+    place-items: center;
+    border: 1px solid #ffffff3b;
+    border-radius: 11px;
+    background: linear-gradient(145deg, #ffffff35, #ffffff0a);
+    font-weight: 800;
+}
+
+.secu-login-card {
+    width: min(390px, 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    padding: 28px;
+    border: 1px solid #ffffff24;
+    border-radius: 22px;
+    background: #111722e8;
+    box-shadow: 0 28px 90px #0007, inset 0 1px #ffffff18;
+    backdrop-filter: blur(28px);
+    text-align: left;
+}
+
+.secu-login-avatar-image,
+.secu-login-avatar-fallback {
+    width: 82px;
+    height: 82px;
+    align-self: center;
+    display: grid;
+    place-items: center;
+    margin: 0 auto 12px;
+    border: 2px solid #ffffff8a;
+    border-radius: 50%;
+    object-fit: cover;
+    background: linear-gradient(145deg, #52617d, #171d2a);
+    color: #fff;
+    font-size: 26px;
+    font-weight: 700;
+}
+
+.secu-login-title {
+    margin: 4px 0 5px;
+    color: #fff;
+    font-size: 25px;
+    font-weight: 650;
+    text-align: center;
+}
+
+.secu-login-name {
+    margin: 0;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 650;
+    text-align: center;
+}
+
+.secu-login-label {
+    margin: 7px 0 6px;
+    color: #dbe2ee;
+    font-size: 11px;
+    font-weight: 650;
+}
+
+.secu-login-input {
+    margin: 0 0 8px;
+    background: #ffffff12;
+}
+
+.secu-login-submit {
+    margin-top: 9px;
+}
+
+.secu-login-footer {
+    margin-top: 12px;
+    color: #ffffff9c;
+    font-size: 11px;
+}
+
+/* WINDOWS */
+
+.secu-login-windows {
+    background:
+        radial-gradient(ellipse at 52% 42%, #365a8d80, transparent 55%),
+        linear-gradient(135deg, #101a2b, #070a12 72%);
+}
+
+.secu-login-windows .secu-login-card {
+    border-radius: 9px;
+    background: #101a2be8;
+}
+
+.secu-login-windows .secu-login-submit {
+    border-radius: 4px;
+    background: #1673d1;
+    color: #fff;
+}
+
+/* MACOS */
+
+.secu-login-macos {
+    background:
+        radial-gradient(ellipse at 50% 40%, #65748c70, transparent 52%),
+        linear-gradient(145deg, #222b39, #090d14 80%);
+}
+
+.secu-login-macos .secu-login-brand {
+    top: 22px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.secu-login-macos .secu-login-card {
+    width: min(340px, 100%);
+    align-items: center;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    backdrop-filter: none;
+    text-align: center;
+}
+
+.secu-login-macos .secu-login-label {
+    align-self: flex-start;
+}
+
+.secu-login-macos .secu-login-submit {
+    width: 100%;
+    border-radius: 999px;
+    background: #e7ebf3;
+    color: #18202d;
+}
+
+/* CHROMEOS */
+
+.secu-login-chrome {
+    background:
+        radial-gradient(ellipse at 50% 45%, #e9f0fb, #dce5f2 68%, #cbd7e8);
+    color: #202a3b;
+}
+
+.secu-login-chrome .secu-login-brand,
+.secu-login-chrome .secu-login-footer {
+    color: #34445d;
+}
+
+.secu-login-chrome .secu-login-brand-mark {
+    border-color: #9aabc3;
+    background: #ffffff9c;
+    color: #26364e;
+}
+
+.secu-login-chrome .secu-login-card {
+    width: min(420px, 100%);
+    border: 1px solid #fff;
+    border-radius: 24px;
+    background: #f8faffed;
+    box-shadow: 0 18px 55px #40516d26;
+    color: #26364e;
+    text-align: center;
+}
+
+.secu-login-chrome .secu-login-title,
+.secu-login-chrome .secu-login-name {
+    color: #26364e;
+}
+
+.secu-login-chrome .secu-login-label {
+    color: #63728a;
+}
+
+.secu-login-chrome .secu-login-input {
+    border-color: #c6d1e2;
+    background: #fff;
+    color: #1d2b40;
+}
+
+.secu-login-chrome .secu-login-submit {
+    border-radius: 999px;
+    background: #1a73e8;
+    color: #fff;
+}
+
+/* ENTRY SCREEN */
+
+.secu-entry-screen {
+    background:
+        radial-gradient(ellipse at 50% 42%, #3c568b70, transparent 56%),
+        linear-gradient(145deg, #121927, #07090f 78%);
+}
+
+.secu-entry-mark {
+    width: 64px;
+    height: 64px;
+    border-radius: 20px;
+    font-size: 25px;
+}
+
+.secu-entry-eyebrow {
+    margin: 0;
+    color: #aebbd1;
+    font-size: 10px;
+    letter-spacing: 3px;
+}
+
+.secu-entry-title {
+    margin: 4px 0 0;
+    font-size: clamp(25px, 5vw, 38px);
+    letter-spacing: -1px;
+}
+
+.secu-entry-description {
+    margin: 0 0 12px;
+    color: #b6c0d1;
+    font-size: 13px;
+}
+
+.secu-entry-button {
+    min-width: 210px;
+    padding: 14px 20px;
+    border: 1px solid #ffffff38;
+    border-radius: 10px;
+    background: #f4f6fb;
+    color: #101725;
+    font: 650 13px "Segoe UI", sans-serif;
+    cursor: pointer;
+}
+
+.secu-entry-button span {
+    margin-left: 16px;
+    font-size: 16px;
+}
+
+.secu-entry-hint {
+    margin: 4px 0 0;
+    color: #8995aa;
+    font-size: 11px;
+}
+
+.secu-entry-macos {
+    background:
+        radial-gradient(ellipse at 50% 42%, #63758d70, transparent 56%),
+        linear-gradient(145deg, #202a39, #080c13 78%);
+}
+
+.secu-entry-chrome {
+    background:
+        radial-gradient(ellipse at 50% 45%, #e9f0fb, #dce5f2 68%, #cbd7e8);
+    color: #26364e;
+}
+
+.secu-entry-chrome .secu-entry-eyebrow,
+.secu-entry-chrome .secu-entry-description,
+.secu-entry-chrome .secu-entry-hint {
+    color: #63728a;
+}
+
+.secu-entry-chrome .secu-entry-button {
+    border: 0;
+    border-radius: 999px;
+    background: #1a73e8;
+    color: #fff;
+}
+
+/* PROFILE PHOTO CONTROL */
+
+.profile-photo-control {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 18px 0 24px;
+    padding: 16px;
+    border: 1px solid var(--panel-border);
+    border-radius: 14px;
+    background: rgba(128,128,128,.08);
+}
+
+.profile-photo-control img {
+    width: 68px;
+    height: 68px;
+    flex: 0 0 68px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: #333;
+}
+
+.profile-photo-control div {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 7px;
+}
+
+.profile-photo-control span {
+    color: var(--desktop-muted);
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+/* APP ICON GRADIENTS */
+
+.desktop-icon,
+.mac-shortcuts button,
+.chrome-shortcuts button,
+#macDock button,
+#chromeShelfApps button {
+    --app-gradient-a: #6688ff;
+    --app-gradient-b: #a66bff;
+}
+
+.desktop-icon i,
+.mac-shortcuts button i,
+.chrome-shortcuts button i,
+#macDock button i,
+#chromeShelfApps button i {
+    background: linear-gradient(
+        135deg,
+        var(--app-gradient-a),
+        var(--app-gradient-b)
     );
-  }
+    background-size: 200% 200%;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: secuos-app-gradient 5s ease infinite alternate;
+}
 
-  function setTheme(theme) {
-    if (!["dark", "light", "system"].includes(theme)) return;
+@keyframes secuos-app-gradient {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 100% 50%; }
+}
 
-    if (theme === "system") {
-      root.removeAttribute("data-theme");
-    } else {
-      root.dataset.theme = theme;
+@media (max-width: 480px) {
+    .secu-boot-content {
+        width: calc(100% - 42px);
     }
 
-    storage.set("theme", theme);
-  }
-
-  function setWallpaper(path) {
-    if (!path || typeof path !== "string") return;
-
-    wallpaper.style.backgroundImage =
-      `linear-gradient(135deg, rgba(12,15,28,.2), rgba(0,0,0,.1)), url("${path}")`;
-
-    storage.set("wallpaper", path);
-  }
-
-  function setAccent(color) {
-    if (!/^#[0-9a-f]{6}$/i.test(color)) return;
-
-    root.style.setProperty("--accent", color);
-    storage.set("accent", color);
-  }
-
-  async function chooseProfilePhoto() {
-    try {
-      if (!window.SecuFileSystem?.pickFile) {
-        throw new Error("SecuOS Files is not ready.");
-      }
-
-      const item = await window.SecuFileSystem.pickFile({
-        accept: "image/*"
-      });
-
-      if (!item) return;
-
-      if (!item.blob || !item.type?.startsWith("image/")) {
-        throw new Error("Please choose an image.");
-      }
-
-      const reader = new FileReader();
-
-      reader.onload = () => {
-        if (
-          typeof reader.result !== "string" ||
-          !reader.result.startsWith("data:image/")
-        ) {
-          return;
-        }
-
-        const profile = getProfile();
-
-        if (!profile) {
-          throw new Error("No SecuOS profile exists.");
-        }
-
-        profile.avatarDataUrl = reader.result;
-
-        localStorage.setItem(
-          "secuos.profile",
-          JSON.stringify(profile)
-        );
-
-        updateAvatarImages(reader.result);
-
-        window.SecuDesktop?.notify(
-          "Profile photo updated",
-          `${item.name} is now your profile photo.`
-        );
-      };
-
-      reader.onerror = () => {
-        window.SecuDesktop?.notify(
-          "Photo error",
-          "The selected image could not be read."
-        );
-      };
-
-      reader.readAsDataURL(item.blob);
-
-    } catch (error) {
-      window.SecuDesktop?.notify(
-        "Profile photo unavailable",
-        error.message
-      );
-    }
-  }
-
-  function addProfilePhotoControls() {
-    const page = document.querySelector(
-      '.settings-page[data-page="personalization"]'
-    );
-
-    if (!page || page.querySelector("#profileAvatarButton")) return;
-
-    const control = document.createElement("div");
-
-    control.className = "profile-photo-control";
-
-    control.innerHTML = `
-      <img
-        id="profileAvatarPreview"
-        src="${currentAvatar()}"
-        alt="Profile photo"
-      >
-
-      <div>
-        <strong>Profile photo</strong>
-        <span>Choose an image already uploaded to SecuOS Files.</span>
-
-        <button
-          class="primary-button"
-          id="profileAvatarButton"
-          type="button">
-          <i class="ri-image-add-line"></i>
-          Choose photo from Files
-        </button>
-      </div>
-    `;
-
-    page.insertBefore(control, page.querySelector("label"));
-
-    control.querySelector(
-      "#profileAvatarButton"
-    ).addEventListener("click", chooseProfilePhoto);
-  }
-
-  document.querySelectorAll("[data-set-os]").forEach(button => {
-    button.addEventListener("click", () => {
-      setOS(button.dataset.setOs);
-    });
-  });
-
-  document.querySelectorAll("[data-theme]").forEach(button => {
-    button.addEventListener("click", () => {
-      setTheme(button.dataset.theme);
-    });
-  });
-
-  document.querySelectorAll("[data-wallpaper]").forEach(button => {
-    button.addEventListener("click", () => {
-      setWallpaper(button.dataset.wallpaper);
-    });
-  });
-
-  document.getElementById("accentPicker")?.addEventListener(
-    "input",
-    event => setAccent(event.target.value)
-  );
-
-  document.getElementById("wallpaperUpload")?.addEventListener(
-    "change",
-    event => {
-      const file = event.target.files?.[0];
-
-      if (!file || !file.type.startsWith("image/")) return;
-
-      const reader = new FileReader();
-
-      reader.onload = () => {
-        if (typeof reader.result !== "string") return;
-
-        wallpaper.style.backgroundImage =
-          `linear-gradient(135deg, rgba(12,15,28,.15), rgba(0,0,0,.05)), url("${reader.result}")`;
-
-        storage.set("wallpaper-upload", reader.result);
-        storage.set("wallpaper", "");
-      };
-
-      reader.readAsDataURL(file);
-    }
-  );
-
-  document.getElementById("saveProfile")?.addEventListener(
-    "click",
-    () => {
-      const displayName = document.getElementById(
-        "displayNameInput"
-      )?.value.trim();
-
-      const username = document.getElementById(
-        "usernameInput"
-      )?.value.trim();
-
-      if (displayName) storage.set("display-name", displayName);
-      if (username) storage.set("username", username);
-
-      const profile = getProfile();
-
-      if (profile) {
-        if (displayName) profile.displayName = displayName;
-        if (username) profile.username = username;
-
-        localStorage.setItem(
-          "secuos.profile",
-          JSON.stringify(profile)
-        );
-      }
-
-      updateProfile();
-
-      window.SecuDesktop?.notify(
-        "Profile saved",
-        "Your local desktop profile has been updated."
-      );
-    }
-  );
-
-  function updateProfile() {
-    const name = storage.get("display-name", "User");
-
-    document.querySelectorAll(".profile-name").forEach(element => {
-      element.textContent = name;
-    });
-
-    const nameInput = document.getElementById("displayNameInput");
-    const usernameInput = document.getElementById("usernameInput");
-
-    if (nameInput) nameInput.value = name;
-
-    if (usernameInput) {
-      usernameInput.value = storage.get("username", "user");
+    .secu-boot-title {
+        font-size: 25px;
     }
 
-    updateAvatarImages(currentAvatar());
-  }
-
-  const iconsToggle = document.getElementById("desktopIconsToggle");
-  const transparencyToggle = document.getElementById("transparencyToggle");
-  const secondsToggle = document.getElementById("secondsToggle");
-
-  function setDesktopIcons(enabled) {
-    document.querySelectorAll(
-      ".desktop-shortcuts, .mac-shortcuts, .chrome-shortcuts"
-    ).forEach(element => {
-      element.style.display = enabled ? "" : "none";
-    });
-
-    storage.set("desktop-icons", String(enabled));
-  }
-
-  iconsToggle?.addEventListener("change", () => {
-    setDesktopIcons(iconsToggle.checked);
-  });
-
-  transparencyToggle?.addEventListener("change", () => {
-    root.dataset.reducedTransparency = String(
-      transparencyToggle.checked
-    );
-
-    storage.set(
-      "reduced-transparency",
-      String(transparencyToggle.checked)
-    );
-  });
-
-  secondsToggle?.addEventListener("change", () => {
-    storage.set("seconds", String(secondsToggle.checked));
-
-    window.dispatchEvent(
-      new Event("secuos-clock-update")
-    );
-  });
-
-  document.querySelectorAll("[data-settings-page]").forEach(button => {
-    button.addEventListener("click", () => {
-      const page = button.dataset.settingsPage;
-
-      document.querySelectorAll("[data-settings-page]").forEach(item => {
-        item.classList.toggle("active", item === button);
-      });
-
-      document.querySelectorAll(".settings-page").forEach(item => {
-        item.classList.toggle(
-          "active",
-          item.dataset.page === page
-        );
-      });
-    });
-  });
-
-  function loadSettings() {
-    setOS(storage.get("os", "windows"));
-    setTheme(storage.get("theme", "dark"));
-
-    const accent = storage.get("accent", "#6688ff");
-    setAccent(accent);
-
-    const uploaded = storage.get("wallpaper-upload");
-    const savedWallpaper = storage.get("wallpaper");
-
-    if (uploaded) {
-      wallpaper.style.backgroundImage =
-        `linear-gradient(135deg, rgba(12,15,28,.15), rgba(0,0,0,.05)), url("${uploaded}")`;
-    } else if (savedWallpaper) {
-      setWallpaper(savedWallpaper);
+    .secu-boot-logo {
+        width: 72px;
+        height: 72px;
+        font-size: 32px;
     }
 
-    const showIcons = storage.get("desktop-icons", "true") === "true";
-    const reducedTransparency =
-      storage.get("reduced-transparency") === "true";
-    const showSeconds = storage.get("seconds") === "true";
-
-    if (iconsToggle) iconsToggle.checked = showIcons;
-    if (transparencyToggle) {
-      transparencyToggle.checked = reducedTransparency;
+    .secu-login-brand {
+        top: 16px;
+        left: 16px;
     }
-    if (secondsToggle) secondsToggle.checked = showSeconds;
 
-    setDesktopIcons(showIcons);
+    .secu-login-card {
+        padding: 22px 18px;
+    }
 
-    root.dataset.reducedTransparency =
-      String(reducedTransparency);
+    .profile-photo-control {
+        align-items: flex-start;
+    }
+}
 
-    const accentPicker = document.getElementById("accentPicker");
-
-    if (accentPicker) accentPicker.value = accent;
-
-    addProfilePhotoControls();
-    updateProfile();
-  }
-
-  loadSettings();
-
-  window.SecuSettings = {
-    setOS,
-    setTheme,
-    setWallpaper,
-    setAccent,
-    chooseProfilePhoto
-  };
-})();
+@media (prefers-reduced-motion: reduce) {
+    #secu-boot *,
+    #secu-boot *::before,
+    #secu-boot *::after {
+        animation-duration: .01ms !important;
+        transition-duration: .01ms !important;
+    }
+}
