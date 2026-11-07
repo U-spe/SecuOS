@@ -1,10 +1,12 @@
 {
   "id": "popcorner",
   "name": "Popcorner",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "icon": "ri-movie-2-line",
   "description": "Browse your local video library.",
   "core": false,
   "entry": "./app.js",
-  "styles": []
+  "styles": [
+    "./app.css"
+  ]
 }

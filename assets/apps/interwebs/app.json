@@ -1,10 +1,12 @@
 {
   "id": "interwebs",
   "name": "InterWebs",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "icon": "ri-global-line",
-  "description": "Browser interface. Server connection pending.",
+  "description": "Open websites from your desktop.",
   "core": false,
   "entry": "./app.js",
-  "styles": []
+  "styles": [
+    "./app.css"
+  ]
 }

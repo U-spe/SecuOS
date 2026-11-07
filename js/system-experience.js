@@ -33,12 +33,8 @@
     { id: "quickbar", name: "Quick Bar", icon: "ri-flashlight-line", description: "Open your favorite applications.", core: true },
     { id: "camera", name: "Camera", icon: "ri-camera-line", description: "Use your device camera.", core: false },
     { id: "soundie", name: "Soundie", icon: "ri-music-2-line", description: "Play audio saved in Files.", core: false },
-    { id: "gfort", name: "GFort", icon: "ri-gamepad-line", description: "Choose a future game library.", core: false },
-    { id: "interwebz", name: "InterWebz", icon: "ri-global-line", description: "Browser interface. Server connection pending.", core: false },
+    { id: "interwebs", name: "InterWebs", icon: "ri-global-line", description: "Open websites from your desktop.", core: false },
     { id: "popcorner", name: "Popcorner", icon: "ri-movie-2-line", description: "Browse your local video library.", core: false },
-    { id: "scar", name: "Scar", icon: "ri-sparkling-2-line", description: "AI interface. Provider connection pending.", core: false },
-    { id: "mail", name: "Mail", icon: "ri-mail-line", description: "Manage local drafts.", core: false },
-    { id: "chat", name: "Chat", icon: "ri-message-3-line", description: "Local chat workspace.", core: false }
   ];
 
   function escapeHTML(value) {
@@ -164,29 +160,24 @@
     }, delay);
   }
 
-  function launch(id, options = {}) {
+  async function launch(id, options = {}) {
     if (!isInstalled(id)) {
       notify("App not installed", "Install this app from the Apps manager first.");
       return;
     }
-
-    if (id === "settings") {
-      window.openSecuSettings?.();
+    if (!appInfo(id)) {
+      notify("App unavailable", "This application is not registered.");
       return;
     }
-
-    const handler = appHandlers[id];
-
-    if (!handler) {
-      notify("App unavailable", "This app does not have a launch handler.");
-      return;
+    document.querySelectorAll(".floating-panel.open").forEach(panel => panel.classList.remove("open"));
+    try {
+      const appModule = await import("/assets/apps/" + encodeURIComponent(id) + "/app.js");
+      if (typeof appModule.open !== "function") throw new Error("The app entry point does not export open().");
+      await appModule.open(options);
+    } catch (error) {
+      console.error("[SecuOS] Could not open app:", id, error);
+      notify("App failed to open", error.message || "The application could not be loaded.");
     }
-
-    document.querySelectorAll(".floating-panel.open").forEach(panel => {
-      panel.classList.remove("open");
-    });
-
-    handler(options);
   }
 
   const appHandlers = {
@@ -202,13 +193,11 @@
     quickbar: openQuickBar,
     camera: openCamera,
     soundie: openSoundie,
-    gfort: openGFort,
-    interwebz: openInterWebz,
+    interwebs: openInterWebz,
     popcorner: openPopcorner,
-    scar: openScar,
-    mail: openMail,
-    chat: openChat
+    settings: () => window.openSecuSettings?.()
   };
+  window.SecuOSLegacyAppHandlers = appHandlers;
 
   // --------------------------------------------------
   // LAUNCH BEHAVIOR
@@ -1011,7 +1000,7 @@
   // --------------------------------------------------
 
   function openInterWebz() {
-    showApp("interwebz", `
+    showApp("interwebs", `
       <div class="integration-app interwebz-app">
         <div class="integration-logo"><i class="ri-global-line"></i></div>
         <h2>InterWebz</h2>
