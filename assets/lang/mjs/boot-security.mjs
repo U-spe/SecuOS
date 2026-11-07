@@ -53,6 +53,26 @@ export function getProfile() {
     }
 }
 
+export function saveProfile(updates = {}) {
+    const profile = getProfile();
+
+    if (!profile) {
+        throw new Error("No profile exists.");
+    }
+
+    const updated = {
+        ...profile,
+        ...updates
+    };
+
+    localStorage.setItem(
+        PROFILE_KEY,
+        JSON.stringify(updated)
+    );
+
+    return updated;
+}
+
 export async function createProfile({
     displayName,
     username,
@@ -104,6 +124,7 @@ export async function createProfile({
         passwordSalt,
         passwordHash,
         avatar,
+        avatarDataUrl: null,
         createdAt: new Date().toISOString()
     };
 
