@@ -1,0 +1,10 @@
+{
+  "id": "trash",
+  "name": "Trash",
+  "version": "1.0.0",
+  "icon": "ri-delete-bin-6-line",
+  "description": "Restore or permanently delete items.",
+  "core": true,
+  "entry": "./app.js",
+  "styles": []
+}

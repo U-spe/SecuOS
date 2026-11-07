@@ -1,0 +1,10 @@
+{
+  "id": "quickbar",
+  "name": "Quick Bar",
+  "version": "1.0.0",
+  "icon": "ri-flashlight-line",
+  "description": "Open your favorite applications.",
+  "core": true,
+  "entry": "./app.js",
+  "styles": []
+}

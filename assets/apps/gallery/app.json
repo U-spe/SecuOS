@@ -1,0 +1,10 @@
+{
+  "id": "gallery",
+  "name": "Gallery",
+  "version": "1.0.0",
+  "icon": "ri-gallery-line",
+  "description": "View images saved in Files.",
+  "core": true,
+  "entry": "./app.js",
+  "styles": []
+}

@@ -1,0 +1,10 @@
+{
+  "id": "files",
+  "name": "Files",
+  "version": "1.0.0",
+  "icon": "ri-folder-3-fill",
+  "description": "Browse and manage your files.",
+  "core": true,
+  "entry": "./app.js",
+  "styles": []
+}

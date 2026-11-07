@@ -1,0 +1,10 @@
+{
+  "id": "notepad",
+  "name": "Notepad",
+  "version": "1.0.0",
+  "icon": "ri-sticky-note-line",
+  "description": "Write and save notes.",
+  "core": true,
+  "entry": "./app.js",
+  "styles": []
+}

@@ -1,0 +1,10 @@
+{
+  "id": "interwebs",
+  "name": "InterWebs",
+  "version": "1.0.0",
+  "icon": "ri-global-line",
+  "description": "Browser interface. Server connection pending.",
+  "core": false,
+  "entry": "./app.js",
+  "styles": []
+}

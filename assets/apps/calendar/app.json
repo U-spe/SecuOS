@@ -1,0 +1,10 @@
+{
+  "id": "calendar",
+  "name": "Calendar",
+  "version": "1.0.0",
+  "icon": "ri-calendar-2-line",
+  "description": "Manage your events.",
+  "core": true,
+  "entry": "./app.js",
+  "styles": []
+}

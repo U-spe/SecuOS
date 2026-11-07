@@ -1,0 +1,10 @@
+{
+  "id": "apps",
+  "name": "Apps",
+  "version": "1.0.0",
+  "icon": "ri-apps-2-line",
+  "description": "Install and manage applications.",
+  "core": true,
+  "entry": "./app.js",
+  "styles": []
+}

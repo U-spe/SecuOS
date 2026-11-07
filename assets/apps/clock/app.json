@@ -1,0 +1,10 @@
+{
+  "id": "clock",
+  "name": "Clock",
+  "version": "1.0.0",
+  "icon": "ri-time-line",
+  "description": "View the time and date.",
+  "core": true,
+  "entry": "./app.js",
+  "styles": []
+}

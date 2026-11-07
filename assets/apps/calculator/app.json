@@ -1,0 +1,10 @@
+{
+  "id": "calculator",
+  "name": "Calculator",
+  "version": "1.0.0",
+  "icon": "ri-calculator-line",
+  "description": "Perform calculations.",
+  "core": true,
+  "entry": "./app.js",
+  "styles": []
+}

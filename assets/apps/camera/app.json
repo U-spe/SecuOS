@@ -1,0 +1,10 @@
+{
+  "id": "camera",
+  "name": "Camera",
+  "version": "1.0.0",
+  "icon": "ri-camera-line",
+  "description": "Use your device camera.",
+  "core": false,
+  "entry": "./app.js",
+  "styles": []
+}
