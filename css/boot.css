@@ -1,308 +1,410 @@
-:root {
-    --secu-boot-bg: #08090d;
-    --secu-boot-text: #f5f6fa;
-    --secu-boot-muted: #9299a8;
-    --secu-boot-accent: #8195ff;
-    --secu-boot-border: #ffffff18;
-}
+(() => {
+  "use strict";
 
-#secu-boot {
-    position: fixed;
-    inset: 0;
-    z-index: 999999;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: auto;
-    color: var(--secu-boot-text);
-    background: var(--secu-boot-bg);
-    font-family: Inter, "Segoe UI", sans-serif;
-}
+  const root = document.documentElement;
+  const wallpaper = document.querySelector(".wallpaper");
 
-#secu-boot *,
-#secu-boot *::before,
-#secu-boot *::after {
-    box-sizing: border-box;
-}
+  const storage = {
+    get(key, fallback = "") {
+      try {
+        return localStorage.getItem(`secuos-${key}`) ?? fallback;
+      } catch {
+        return fallback;
+      }
+    },
 
-.secu-boot-background {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    background:
-        radial-gradient(
-            ellipse at 50% 38%,
-            #28375485,
-            transparent 55%
-        ),
-        radial-gradient(
-            ellipse at 10% 90%,
-            #222b4555,
-            transparent 45%
+    set(key, value) {
+      try {
+        localStorage.setItem(`secuos-${key}`, value);
+      } catch {
+        window.SecuDesktop?.notify(
+          "Storage unavailable",
+          "Your browser could not save this preference."
         );
-}
+      }
+    }
+  };
 
-.secu-boot-grid {
-    position: absolute;
-    inset: 0;
-    opacity: .11;
-    pointer-events: none;
-    background-image:
-        linear-gradient(#ffffff12 1px, transparent 1px),
-        linear-gradient(90deg, #ffffff12 1px, transparent 1px);
-    background-size: 48px 48px;
-    mask-image: linear-gradient(
-        to bottom,
-        black,
-        transparent 85%
+  function getProfile() {
+    try {
+      return JSON.parse(
+        localStorage.getItem("secuos.profile") || "null"
+      );
+    } catch {
+      return null;
+    }
+  }
+
+  function updateAvatarImages(src) {
+    document.querySelectorAll(
+      ".settings-profile img, .profile-small img, #profileAvatarPreview"
+    ).forEach(image => {
+      image.src = src;
+    });
+  }
+
+  function currentAvatar() {
+    const profile = getProfile();
+
+    return profile?.avatarDataUrl ||
+      "/assets/graphics/avatars/default.png";
+  }
+
+  function setOS(os) {
+    if (!["windows", "macos", "chrome"].includes(os)) return;
+
+    root.dataset.os = os;
+    storage.set("os", os);
+
+    document.querySelectorAll("[data-set-os]").forEach(button => {
+      button.classList.toggle(
+        "active",
+        button.dataset.setOs === os
+      );
+    });
+
+    window.SecuDesktop?.notify(
+      "Desktop style changed",
+      `Your desktop now uses ${
+        os === "macos" ? "macOS" :
+        os === "chrome" ? "ChromeOS" : "Windows 11"
+      }.`
     );
-}
+  }
 
-.secu-boot-content {
-    position: relative;
-    z-index: 2;
-    width: min(440px, calc(100% - 36px));
-    margin: auto;
-    padding: 30px 0;
-    text-align: center;
-    animation: secu-boot-appear .5s ease both;
-}
+  function setTheme(theme) {
+    if (!["dark", "light", "system"].includes(theme)) return;
 
-.secu-boot-logo {
-    width: 82px;
-    height: 82px;
-    display: grid;
-    place-items: center;
-    margin: 0 auto 27px;
-    border: 1px solid #ffffff25;
-    border-radius: 25px;
-    background: linear-gradient(
-        145deg,
-        #30394b,
-        #11151e
+    if (theme === "system") {
+      root.removeAttribute("data-theme");
+    } else {
+      root.dataset.theme = theme;
+    }
+
+    storage.set("theme", theme);
+  }
+
+  function setWallpaper(path) {
+    if (!path || typeof path !== "string") return;
+
+    wallpaper.style.backgroundImage =
+      `linear-gradient(135deg, rgba(12,15,28,.2), rgba(0,0,0,.1)), url("${path}")`;
+
+    storage.set("wallpaper", path);
+  }
+
+  function setAccent(color) {
+    if (!/^#[0-9a-f]{6}$/i.test(color)) return;
+
+    root.style.setProperty("--accent", color);
+    storage.set("accent", color);
+  }
+
+  async function chooseProfilePhoto() {
+    try {
+      if (!window.SecuFileSystem?.pickFile) {
+        throw new Error("SecuOS Files is not ready.");
+      }
+
+      const item = await window.SecuFileSystem.pickFile({
+        accept: "image/*"
+      });
+
+      if (!item) return;
+
+      if (!item.blob || !item.type?.startsWith("image/")) {
+        throw new Error("Please choose an image.");
+      }
+
+      const reader = new FileReader();
+
+      reader.onload = () => {
+        if (
+          typeof reader.result !== "string" ||
+          !reader.result.startsWith("data:image/")
+        ) {
+          return;
+        }
+
+        const profile = getProfile();
+
+        if (!profile) {
+          throw new Error("No SecuOS profile exists.");
+        }
+
+        profile.avatarDataUrl = reader.result;
+
+        localStorage.setItem(
+          "secuos.profile",
+          JSON.stringify(profile)
+        );
+
+        updateAvatarImages(reader.result);
+
+        window.SecuDesktop?.notify(
+          "Profile photo updated",
+          `${item.name} is now your profile photo.`
+        );
+      };
+
+      reader.onerror = () => {
+        window.SecuDesktop?.notify(
+          "Photo error",
+          "The selected image could not be read."
+        );
+      };
+
+      reader.readAsDataURL(item.blob);
+
+    } catch (error) {
+      window.SecuDesktop?.notify(
+        "Profile photo unavailable",
+        error.message
+      );
+    }
+  }
+
+  function addProfilePhotoControls() {
+    const page = document.querySelector(
+      '.settings-page[data-page="personalization"]'
     );
-    box-shadow:
-        0 18px 65px #0009,
-        inset 0 1px #ffffff25;
-    font-size: 36px;
-    font-weight: 800;
-    letter-spacing: -4px;
-}
 
-.secu-boot-title {
-    margin: 0;
-    font-size: 29px;
-    font-weight: 650;
-    letter-spacing: -1.1px;
-}
+    if (!page || page.querySelector("#profileAvatarButton")) return;
 
-.secu-boot-description {
-    margin: 11px 0 26px;
-    color: var(--secu-boot-muted);
-    font-size: 13px;
-    line-height: 1.7;
-}
+    const control = document.createElement("div");
 
-.secu-boot-button {
-    width: 100%;
-    padding: 14px 18px;
-    border: 1px solid transparent;
-    border-radius: 12px;
-    background: #f1f2f6;
-    color: #101116;
-    font-family: inherit;
-    font-size: 13px;
-    font-weight: 700;
-    cursor: pointer;
-    transition:
-        transform .2s ease,
-        background .2s ease,
-        border-color .2s ease;
-}
+    control.className = "profile-photo-control";
 
-.secu-boot-button:hover {
-    transform: translateY(-2px);
-    background: white;
-}
+    control.innerHTML = `
+      <img
+        id="profileAvatarPreview"
+        src="${currentAvatar()}"
+        alt="Profile photo"
+      >
 
-.secu-boot-button:active {
-    transform: scale(.985);
-}
+      <div>
+        <strong>Profile photo</strong>
+        <span>Choose an image already uploaded to SecuOS Files.</span>
 
-.secu-boot-button.secondary {
-    margin-top: 10px;
-    border-color: var(--secu-boot-border);
-    background: #ffffff0b;
-    color: white;
-}
+        <button
+          class="primary-button"
+          id="profileAvatarButton"
+          type="button">
+          <i class="ri-image-add-line"></i>
+          Choose photo from Files
+        </button>
+      </div>
+    `;
 
-.secu-boot-button.secondary:hover {
-    background: #ffffff15;
-}
+    page.insertBefore(control, page.querySelector("label"));
 
-.secu-boot-field {
-    width: 100%;
-    padding: 14px 15px;
-    margin-bottom: 12px;
-    border: 1px solid var(--secu-boot-border);
-    border-radius: 11px;
-    outline: none;
-    background: #ffffff09;
-    color: white;
-    font-family: inherit;
-    font-size: 13px;
-    transition: border-color .2s ease;
-}
+    control.querySelector(
+      "#profileAvatarButton"
+    ).addEventListener("click", chooseProfilePhoto);
+  }
 
-.secu-boot-field:focus {
-    border-color: var(--secu-boot-accent);
-    box-shadow: 0 0 0 3px #8195ff20;
-}
+  document.querySelectorAll("[data-set-os]").forEach(button => {
+    button.addEventListener("click", () => {
+      setOS(button.dataset.setOs);
+    });
+  });
 
-.secu-boot-field::placeholder {
-    color: #777f8d;
-}
+  document.querySelectorAll("[data-theme]").forEach(button => {
+    button.addEventListener("click", () => {
+      setTheme(button.dataset.theme);
+    });
+  });
 
-.secu-boot-error {
-    min-height: 18px;
-    margin: 0 0 12px;
-    color: #ff9292;
-    font-size: 12px;
-    line-height: 1.5;
-}
+  document.querySelectorAll("[data-wallpaper]").forEach(button => {
+    button.addEventListener("click", () => {
+      setWallpaper(button.dataset.wallpaper);
+    });
+  });
 
-.secu-boot-footer {
-    margin-top: 28px;
-    color: #707887;
-    font-family: monospace;
-    font-size: 10px;
-    letter-spacing: .5px;
-}
+  document.getElementById("accentPicker")?.addEventListener(
+    "input",
+    event => setAccent(event.target.value)
+  );
 
-.secu-boot-progress {
-    width: 100%;
-    height: 4px;
-    margin: 25px 0 12px;
-    overflow: hidden;
-    border-radius: 20px;
-    background: #ffffff18;
-}
+  document.getElementById("wallpaperUpload")?.addEventListener(
+    "change",
+    event => {
+      const file = event.target.files?.[0];
 
-.secu-boot-progress-fill {
-    width: 0;
-    height: 100%;
-    border-radius: inherit;
-    background: var(--secu-boot-accent);
-    box-shadow: 0 0 15px var(--secu-boot-accent);
-    transition: width .15s linear;
-}
+      if (!file || !file.type.startsWith("image/")) return;
 
-.secu-boot-status {
-    display: flex;
-    justify-content: space-between;
-    gap: 12px;
-    color: var(--secu-boot-muted);
-    font-family: monospace;
-    font-size: 11px;
-}
+      const reader = new FileReader();
 
-.secu-boot-checks {
-    max-height: 230px;
-    overflow-y: auto;
-    margin-top: 20px;
-    padding: 12px 15px;
-    border: 1px solid var(--secu-boot-border);
-    border-radius: 13px;
-    background: #ffffff07;
-    text-align: left;
-}
+      reader.onload = () => {
+        if (typeof reader.result !== "string") return;
 
-.secu-boot-check {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 12px;
-    padding: 9px 2px;
-    color: #b8bfcc;
-    font-size: 11px;
-}
+        wallpaper.style.backgroundImage =
+          `linear-gradient(135deg, rgba(12,15,28,.15), rgba(0,0,0,.05)), url("${reader.result}")`;
 
-.secu-boot-check + .secu-boot-check {
-    border-top: 1px solid #ffffff0c;
-}
+        storage.set("wallpaper-upload", reader.result);
+        storage.set("wallpaper", "");
+      };
 
-.secu-boot-check i {
-    font-size: 15px;
-    color: #8ed6ad;
-}
+      reader.readAsDataURL(file);
+    }
+  );
 
-.secu-boot-avatar {
-    width: 76px;
-    height: 76px;
-    display: grid;
-    place-items: center;
-    margin: 0 auto 20px;
-    border: 1px solid #ffffff25;
-    border-radius: 50%;
-    background: linear-gradient(
-        145deg,
-        #414d68,
-        #171c29
+  document.getElementById("saveProfile")?.addEventListener(
+    "click",
+    () => {
+      const displayName = document.getElementById(
+        "displayNameInput"
+      )?.value.trim();
+
+      const username = document.getElementById(
+        "usernameInput"
+      )?.value.trim();
+
+      if (displayName) storage.set("display-name", displayName);
+      if (username) storage.set("username", username);
+
+      const profile = getProfile();
+
+      if (profile) {
+        if (displayName) profile.displayName = displayName;
+        if (username) profile.username = username;
+
+        localStorage.setItem(
+          "secuos.profile",
+          JSON.stringify(profile)
+        );
+      }
+
+      updateProfile();
+
+      window.SecuDesktop?.notify(
+        "Profile saved",
+        "Your local desktop profile has been updated."
+      );
+    }
+  );
+
+  function updateProfile() {
+    const name = storage.get("display-name", "User");
+
+    document.querySelectorAll(".profile-name").forEach(element => {
+      element.textContent = name;
+    });
+
+    const nameInput = document.getElementById("displayNameInput");
+    const usernameInput = document.getElementById("usernameInput");
+
+    if (nameInput) nameInput.value = name;
+
+    if (usernameInput) {
+      usernameInput.value = storage.get("username", "user");
+    }
+
+    updateAvatarImages(currentAvatar());
+  }
+
+  const iconsToggle = document.getElementById("desktopIconsToggle");
+  const transparencyToggle = document.getElementById("transparencyToggle");
+  const secondsToggle = document.getElementById("secondsToggle");
+
+  function setDesktopIcons(enabled) {
+    document.querySelectorAll(
+      ".desktop-shortcuts, .mac-shortcuts, .chrome-shortcuts"
+    ).forEach(element => {
+      element.style.display = enabled ? "" : "none";
+    });
+
+    storage.set("desktop-icons", String(enabled));
+  }
+
+  iconsToggle?.addEventListener("change", () => {
+    setDesktopIcons(iconsToggle.checked);
+  });
+
+  transparencyToggle?.addEventListener("change", () => {
+    root.dataset.reducedTransparency = String(
+      transparencyToggle.checked
     );
-    box-shadow: 0 10px 35px #0006;
-    font-size: 26px;
-    font-weight: 700;
-}
 
-.secu-boot-spinner {
-    width: 30px;
-    height: 30px;
-    margin: 0 auto 22px;
-    border: 2px solid #ffffff20;
-    border-top-color: var(--secu-boot-accent);
-    border-radius: 50%;
-    animation: secu-boot-spin .8s linear infinite;
-}
+    storage.set(
+      "reduced-transparency",
+      String(transparencyToggle.checked)
+    );
+  });
 
-@keyframes secu-boot-spin {
-    to {
-        transform: rotate(360deg);
+  secondsToggle?.addEventListener("change", () => {
+    storage.set("seconds", String(secondsToggle.checked));
+
+    window.dispatchEvent(
+      new Event("secuos-clock-update")
+    );
+  });
+
+  document.querySelectorAll("[data-settings-page]").forEach(button => {
+    button.addEventListener("click", () => {
+      const page = button.dataset.settingsPage;
+
+      document.querySelectorAll("[data-settings-page]").forEach(item => {
+        item.classList.toggle("active", item === button);
+      });
+
+      document.querySelectorAll(".settings-page").forEach(item => {
+        item.classList.toggle(
+          "active",
+          item.dataset.page === page
+        );
+      });
+    });
+  });
+
+  function loadSettings() {
+    setOS(storage.get("os", "windows"));
+    setTheme(storage.get("theme", "dark"));
+
+    const accent = storage.get("accent", "#6688ff");
+    setAccent(accent);
+
+    const uploaded = storage.get("wallpaper-upload");
+    const savedWallpaper = storage.get("wallpaper");
+
+    if (uploaded) {
+      wallpaper.style.backgroundImage =
+        `linear-gradient(135deg, rgba(12,15,28,.15), rgba(0,0,0,.05)), url("${uploaded}")`;
+    } else if (savedWallpaper) {
+      setWallpaper(savedWallpaper);
     }
-}
 
-@keyframes secu-boot-appear {
-    from {
-        opacity: 0;
-        transform: translateY(12px);
-    }
+    const showIcons = storage.get("desktop-icons", "true") === "true";
+    const reducedTransparency =
+      storage.get("reduced-transparency") === "true";
+    const showSeconds = storage.get("seconds") === "true";
 
-    to {
-        opacity: 1;
-        transform: translateY(0);
+    if (iconsToggle) iconsToggle.checked = showIcons;
+    if (transparencyToggle) {
+      transparencyToggle.checked = reducedTransparency;
     }
-}
+    if (secondsToggle) secondsToggle.checked = showSeconds;
 
-@media (max-width: 480px) {
-    .secu-boot-content {
-        width: calc(100% - 42px);
-    }
+    setDesktopIcons(showIcons);
 
-    .secu-boot-title {
-        font-size: 25px;
-    }
+    root.dataset.reducedTransparency =
+      String(reducedTransparency);
 
-    .secu-boot-logo {
-        width: 72px;
-        height: 72px;
-        font-size: 32px;
-    }
-}
+    const accentPicker = document.getElementById("accentPicker");
 
-@media (prefers-reduced-motion: reduce) {
-    #secu-boot *,
-    #secu-boot *::before,
-    #secu-boot *::after {
-        animation-duration: .01ms !important;
-        transition-duration: .01ms !important;
-    }
-}
+    if (accentPicker) accentPicker.value = accent;
+
+    addProfilePhotoControls();
+    updateProfile();
+  }
+
+  loadSettings();
+
+  window.SecuSettings = {
+    setOS,
+    setTheme,
+    setWallpaper,
+    setAccent,
+    chooseProfilePhoto
+  };
+})();
