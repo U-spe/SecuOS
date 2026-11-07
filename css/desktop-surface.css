@@ -1,0 +1,808 @@
+/* ==================================================
+   SECUOS DESKTOP SURFACES
+   Windows desktop / macOS Dock / ChromeOS shelf
+================================================== */
+
+/* ---------- WINDOWS DESKTOP ICONS ---------- */
+
+.windows-layer .desktop-shortcuts {
+  position: absolute;
+  top: 18px;
+  left: 16px;
+  right: auto;
+  bottom: 66px;
+
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-rows: repeat(6, 88px);
+  grid-auto-columns: 88px;
+  align-content: start;
+  justify-content: start;
+  gap: 5px;
+
+  max-width: calc(100vw - 30px);
+  overflow: auto;
+  scrollbar-width: thin;
+}
+
+.windows-layer .desktop-icon {
+  width: 84px;
+  min-height: 84px;
+  padding: 7px 4px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+
+  border: 1px solid transparent;
+  border-radius: 8px;
+
+  color: #fff;
+  background: transparent;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, .9);
+
+  cursor: default;
+  user-select: none;
+
+  transition:
+    background .15s ease,
+    border-color .15s ease,
+    transform .15s ease;
+}
+
+.windows-layer .desktop-icon:hover,
+.windows-layer .desktop-icon.selected {
+  border-color: rgba(255, 255, 255, .2);
+  background: rgba(255, 255, 255, .13);
+}
+
+.windows-layer .desktop-icon:active {
+  transform: scale(.96);
+}
+
+.windows-layer .desktop-icon > i {
+  font-size: 34px;
+  line-height: 1;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, .3));
+}
+
+.windows-layer .desktop-icon > span {
+  max-width: 78px;
+  overflow-wrap: anywhere;
+  text-align: center;
+  font-size: 11px;
+  line-height: 1.2;
+}
+
+/* ---------- MACOS DESKTOP ---------- */
+
+/* macOS apps live in the Dock, not on the desktop. */
+html[data-os="macos"] .macos-layer .mac-shortcuts {
+  display: none !important;
+}
+
+/* ---------- MACOS DOCK ---------- */
+
+html[data-os="macos"] .mac-dock-container {
+  position: absolute;
+  z-index: 80;
+  left: 0;
+  right: 0;
+  bottom: 9px;
+
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+
+  pointer-events: none;
+}
+
+html[data-os="macos"] .mac-dock {
+  width: max-content;
+  max-width: calc(100vw - 18px);
+  min-height: 68px;
+
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-start;
+  gap: 7px;
+
+  padding: 9px 11px;
+
+  overflow-x: auto;
+  overflow-y: visible;
+  scrollbar-width: thin;
+  overscroll-behavior-x: contain;
+
+  pointer-events: auto;
+
+  border: 1px solid rgba(255, 255, 255, .25);
+  border-radius: 20px;
+
+  background: rgba(220, 225, 238, .19);
+  backdrop-filter: blur(30px) saturate(165%);
+  -webkit-backdrop-filter: blur(30px) saturate(165%);
+
+  box-shadow:
+    0 8px 35px rgba(0, 0, 0, .28),
+    inset 0 1px rgba(255, 255, 255, .15);
+}
+
+html[data-os="macos"] .mac-dock .dock-icon {
+  position: relative;
+  flex: 0 0 48px;
+
+  width: 48px;
+  height: 48px;
+  padding: 0;
+
+  display: grid;
+  place-items: center;
+
+  border: 0;
+  border-radius: 13px;
+
+  color: white;
+  background: rgba(255, 255, 255, .07);
+
+  cursor: pointer;
+
+  transition:
+    transform .16s ease,
+    background .16s ease;
+}
+
+html[data-os="macos"] .mac-dock .dock-icon > i {
+  font-size: 29px;
+  line-height: 1;
+}
+
+html[data-os="macos"] .mac-dock .dock-icon:hover {
+  transform: translateY(-7px) scale(1.08);
+  background: rgba(255, 255, 255, .17);
+}
+
+html[data-os="macos"] .mac-dock .dock-icon:active {
+  transform: scale(.92);
+}
+
+html[data-os="macos"] .mac-dock .dock-label {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 12px);
+
+  width: max-content;
+  max-width: 150px;
+
+  padding: 6px 9px;
+  border: 1px solid rgba(255, 255, 255, .15);
+  border-radius: 7px;
+
+  color: white;
+  background: rgba(25, 25, 30, .9);
+
+  font-size: 11px;
+  line-height: 1;
+
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, 4px);
+
+  transition:
+    opacity .14s ease,
+    transform .14s ease;
+}
+
+html[data-os="macos"] .mac-dock .dock-icon:hover .dock-label {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+html[data-os="macos"] .mac-dock .dock-divider {
+  display: none;
+}
+
+/* ---------- CHROMEOS DESKTOP ---------- */
+
+/* ChromeOS uses the shelf as its app home. */
+html[data-os="chrome"] .chrome-layer .chrome-shortcuts {
+  display: none !important;
+}
+
+/* ---------- CHROMEOS LONG SHELF ---------- */
+
+html[data-os="chrome"] .chrome-shelf {
+  position: absolute;
+  z-index: 80;
+
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  height: 66px;
+  min-height: 66px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0 12px;
+
+  border-top: 1px solid rgba(255, 255, 255, .13);
+
+  background: rgba(24, 27, 35, .83);
+  backdrop-filter: blur(26px) saturate(150%);
+  -webkit-backdrop-filter: blur(26px) saturate(150%);
+}
+
+html[data-os="chrome"] .shelf-launcher {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+
+  width: 42px;
+  height: 42px;
+
+  display: grid;
+  place-items: center;
+
+  border: 0;
+  border-radius: 13px;
+
+  color: white;
+  background: transparent;
+
+  cursor: pointer;
+}
+
+html[data-os="chrome"] .shelf-launcher:hover {
+  background: rgba(255, 255, 255, .13);
+}
+
+html[data-os="chrome"] .shelf-launcher i {
+  font-size: 23px;
+}
+
+/* The long always-visible app bar. */
+html[data-os="chrome"] .shelf-apps {
+  position: absolute;
+  left: 66px;
+  right: 145px;
+
+  height: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+
+  overflow-x: auto;
+  overflow-y: hidden;
+
+  padding: 0 8px;
+
+  scrollbar-width: none;
+  overscroll-behavior-x: contain;
+}
+
+html[data-os="chrome"] .shelf-apps::-webkit-scrollbar {
+  display: none;
+}
+
+html[data-os="chrome"] .shelf-app-icon {
+  position: relative;
+  flex: 0 0 47px;
+
+  width: 47px;
+  height: 47px;
+  padding: 0;
+
+  display: grid;
+  place-items: center;
+
+  border: 0;
+  border-radius: 13px;
+
+  color: white;
+  background: transparent;
+
+  cursor: pointer;
+
+  transition:
+    background .14s ease,
+    transform .14s ease;
+}
+
+html[data-os="chrome"] .shelf-app-icon > i {
+  font-size: 27px;
+  line-height: 1;
+}
+
+html[data-os="chrome"] .shelf-app-icon:hover {
+  background: rgba(255, 255, 255, .14);
+  transform: translateY(-3px);
+}
+
+html[data-os="chrome"] .shelf-app-icon:active {
+  transform: scale(.91);
+}
+
+html[data-os="chrome"] .shelf-app-label {
+  display: none;
+}
+
+/* Keep the status area clear of the app shelf. */
+html[data-os="chrome"] .shelf-status {
+  position: absolute;
+  right: 8px;
+  top: 0;
+  bottom: 0;
+
+  height: auto;
+  min-width: 125px;
+
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+
+  padding-left: 8px;
+
+  background: rgba(24, 27, 35, .94);
+}
+
+/* ---------- WINDOWS SEARCH PANEL ---------- */
+
+.windows-search-panel {
+  position: absolute;
+  z-index: 180;
+
+  left: 50%;
+  bottom: 66px;
+
+  width: min(570px, calc(100vw - 22px));
+  max-height: min(620px, calc(100vh - 90px));
+
+  padding: 18px;
+
+  overflow: auto;
+
+  transform: translateX(-50%);
+}
+
+.windows-search-panel.open {
+  display: block;
+}
+
+.surface-search-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  margin-bottom: 17px;
+}
+
+.surface-search-heading > div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.surface-search-heading strong {
+  font-size: 19px;
+}
+
+.surface-search-eyebrow {
+  color: var(--desktop-muted, #9298a6);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .16em;
+}
+
+.surface-search-heading > button {
+  width: 32px;
+  height: 32px;
+
+  border: 0;
+  border-radius: 8px;
+
+  color: inherit;
+  background: transparent;
+
+  cursor: pointer;
+}
+
+.surface-search-heading > button:hover {
+  background: rgba(128, 128, 128, .15);
+}
+
+.surface-search-input {
+  min-height: 48px;
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  padding: 0 13px;
+
+  border: 1px solid var(--accent, #6688ff);
+  border-radius: 10px;
+
+  background: rgba(128, 128, 128, .1);
+}
+
+.surface-search-input > i {
+  color: var(--accent, #6688ff);
+  font-size: 19px;
+}
+
+.surface-search-input input {
+  flex: 1;
+  min-width: 0;
+
+  border: 0;
+  outline: 0;
+
+  color: inherit;
+  background: transparent;
+
+  font: inherit;
+  font-size: 13px;
+}
+
+.surface-search-input kbd {
+  padding: 4px 6px;
+
+  border: 1px solid var(--panel-border, rgba(128, 128, 128, .2));
+  border-radius: 5px;
+
+  color: var(--desktop-muted, #9298a6);
+  font-size: 9px;
+}
+
+.surface-search-section {
+  display: flex;
+  justify-content: space-between;
+
+  margin: 20px 2px 9px;
+
+  color: var(--desktop-muted, #9298a6);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .1em;
+}
+
+.surface-search-results {
+  display: grid;
+  gap: 4px;
+}
+
+.surface-search-result {
+  width: 100%;
+  min-height: 58px;
+
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr) 20px;
+  align-items: center;
+  gap: 11px;
+
+  padding: 8px 10px;
+
+  border: 0;
+  border-radius: 9px;
+
+  color: inherit;
+  background: transparent;
+
+  text-align: left;
+  cursor: pointer;
+}
+
+.surface-search-result:hover,
+.surface-search-result:focus-visible {
+  outline: none;
+  background: rgba(128, 128, 128, .14);
+}
+
+.surface-search-result-icon {
+  width: 40px;
+  height: 40px;
+
+  display: grid;
+  place-items: center;
+
+  border: 1px solid var(--panel-border, rgba(128, 128, 128, .2));
+  border-radius: 10px;
+
+  background: rgba(128, 128, 128, .1);
+}
+
+.surface-search-result-icon i {
+  color: var(--accent, #6688ff);
+  font-size: 22px;
+}
+
+.surface-search-result-copy {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.surface-search-result-copy strong {
+  font-size: 13px;
+}
+
+.surface-search-result-copy small {
+  overflow: hidden;
+
+  color: var(--desktop-muted, #9298a6);
+  font-size: 11px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.surface-search-result > i {
+  color: var(--desktop-muted, #9298a6);
+}
+
+.surface-search-empty {
+  min-height: 150px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  color: var(--desktop-muted, #9298a6);
+  text-align: center;
+}
+
+.surface-search-empty i {
+  font-size: 30px;
+}
+
+.surface-search-empty strong {
+  color: inherit;
+  font-size: 13px;
+}
+
+.surface-search-empty span {
+  font-size: 11px;
+}
+
+.surface-search-footer {
+  margin-top: 13px;
+  padding-top: 12px;
+
+  border-top: 1px solid var(--panel-border, rgba(128, 128, 128, .2));
+
+  color: var(--desktop-muted, #9298a6);
+  font-size: 10px;
+}
+
+/* ---------- WEATHER ---------- */
+
+.surface-weather-state {
+  min-height: 130px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+
+  padding: 20px;
+
+  color: var(--desktop-muted, #9298a6);
+  text-align: center;
+  font-size: 12px;
+}
+
+.surface-weather-state i {
+  color: var(--accent, #6688ff);
+  font-size: 30px;
+}
+
+.surface-weather-current {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+
+  padding: 20px 12px;
+}
+
+.surface-weather-temperature {
+  display: flex;
+  align-items: flex-start;
+  gap: 3px;
+}
+
+.surface-weather-temperature > i {
+  margin-top: 9px;
+  color: var(--accent, #6688ff);
+  font-size: 27px;
+}
+
+.surface-weather-temperature > strong {
+  font-size: 52px;
+  font-weight: 300;
+  line-height: 1;
+}
+
+.surface-weather-temperature > span {
+  margin-top: 5px;
+  font-size: 13px;
+}
+
+.surface-weather-description {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.surface-weather-description strong {
+  font-size: 14px;
+}
+
+.surface-weather-description span {
+  color: var(--desktop-muted, #9298a6);
+  font-size: 11px;
+}
+
+.surface-weather-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+
+  padding: 12px 0;
+
+  border-top: 1px solid var(--panel-border, rgba(128, 128, 128, .2));
+  border-bottom: 1px solid var(--panel-border, rgba(128, 128, 128, .2));
+}
+
+.surface-weather-stats > div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+
+  text-align: center;
+}
+
+.surface-weather-stats i {
+  color: var(--accent, #6688ff);
+  font-size: 18px;
+}
+
+.surface-weather-stats span {
+  color: var(--desktop-muted, #9298a6);
+  font-size: 10px;
+}
+
+.surface-weather-stats strong {
+  font-size: 12px;
+}
+
+.surface-weather-forecast {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+
+  padding-top: 13px;
+}
+
+.surface-weather-forecast > div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+
+  padding: 10px 4px;
+
+  border: 1px solid var(--panel-border, rgba(128, 128, 128, .2));
+  border-radius: 9px;
+
+  background: rgba(128, 128, 128, .06);
+}
+
+.surface-weather-forecast span {
+  color: var(--desktop-muted, #9298a6);
+  font-size: 11px;
+}
+
+.surface-weather-forecast strong {
+  font-size: 17px;
+}
+
+.surface-weather-forecast small {
+  color: var(--desktop-muted, #9298a6);
+  font-size: 11px;
+}
+
+/* ---------- CLOCK BRIEFING ---------- */
+
+html[data-os="macos"] .clock-briefing {
+  top: 42px;
+  right: 12px;
+  bottom: auto;
+}
+
+html[data-os="chrome"] .clock-briefing {
+  right: 12px;
+  bottom: 76px;
+}
+
+/* ---------- RESPONSIVE ---------- */
+
+@media (max-width: 700px) {
+  .windows-layer .desktop-shortcuts {
+    grid-template-rows: repeat(5, 78px);
+    grid-auto-columns: 72px;
+    gap: 4px;
+  }
+
+  .windows-layer .desktop-icon {
+    width: 70px;
+    min-height: 74px;
+  }
+
+  .windows-layer .desktop-icon > i {
+    font-size: 28px;
+  }
+
+  .windows-layer .desktop-icon > span {
+    max-width: 66px;
+    font-size: 10px;
+  }
+
+  html[data-os="macos"] .mac-dock {
+    max-width: calc(100vw - 12px);
+    gap: 5px;
+    padding: 7px;
+  }
+
+  html[data-os="macos"] .mac-dock .dock-icon {
+    flex-basis: 43px;
+    width: 43px;
+    height: 43px;
+  }
+
+  html[data-os="chrome"] .shelf-apps {
+    left: 57px;
+    right: 100px;
+    justify-content: flex-start;
+    gap: 3px;
+  }
+
+  html[data-os="chrome"] .shelf-app-icon {
+    flex-basis: 42px;
+    width: 42px;
+    height: 42px;
+  }
+
+  html[data-os="chrome"] .shelf-status {
+    min-width: 94px;
+  }
+
+  .surface-weather-current {
+    gap: 10px;
+  }
+
+  .surface-weather-temperature > strong {
+    font-size: 43px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-os="macos"] .mac-dock .dock-icon,
+  html[data-os="chrome"] .shelf-app-icon {
+    transition: none;
+  }
+}
