@@ -1,0 +1,3 @@
+[submodule "assets/storage/ps5"]
+	path = assets/storage/ps5
+	url = https://github.com/U-spe/legacy-assets.git
