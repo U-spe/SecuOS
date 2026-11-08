@@ -27,6 +27,10 @@
     { id: "soundie", name: "Soundie", icon: "ri-music-2-line", description: "Play audio saved in Files.", core: false },
     { id: "interwebs", name: "InterWebs", icon: "ri-global-line", description: "Open websites from your desktop.", core: false },
     { id: "popcorner", name: "Popcorner", icon: "ri-movie-2-line", description: "Browse your local video library.", core: false },
+    { id: "gfort", name: "GFort", icon: "ri-gamepad-fill", description: "Choose a game library platform.", core: false },
+    { id: "scar", name: "Scar", icon: "ri-sparkling-2-line", description: "Open the SecuOS AI workspace.", core: false },
+    { id: "mail", name: "Mail", icon: "ri-mail-line", description: "Create and manage local email drafts.", core: false },
+    { id: "chat", name: "Chat", icon: "ri-message-3-line", description: "Use the local SecuOS chat workspace.", core: false },
   ];
 
   function escapeHTML(value) {
