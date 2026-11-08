@@ -9,5 +9,14 @@ export async function open(){
     capture.onclick=()=>{if(!video.videoWidth)return;const canvas=document.createElement("canvas");canvas.width=video.videoWidth;canvas.height=video.videoHeight;canvas.getContext("2d").drawImage(video,0,0);canvas.toBlob(async blob=>{if(!blob)return;const file=new File([blob],`SecuOS-Capture-${Date.now()}.png`,{type:"image/png"});await window.SecuFileSystem.addFiles([file],"Images");host.notify("Photo saved","Your capture is now in Files and Gallery.");},"image/png");};
     stopButton.onclick=()=>{stop();video.srcObject=null;placeholder.hidden=false;capture.disabled=true;stopButton.disabled=true;};
   }});
-  $("#appWindow")?.addEventListener("click",event=>{if(event.target.closest("[data-window-close]"))stop();},{once:true});
+  const appWindow=$("#appWindow");
+  if(appWindow){
+    const closeHandler=event=>{
+      if(!event.target.closest("[data-window-close]"))return;
+      stop();
+      video.srcObject=null;
+      appWindow.removeEventListener("click",closeHandler);
+    };
+    appWindow.addEventListener("click",closeHandler);
+  }
 }

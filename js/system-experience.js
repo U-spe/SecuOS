@@ -164,8 +164,17 @@
     document.querySelectorAll(".floating-panel.open").forEach(panel => panel.classList.remove("open"));
     try {
       const styleHref = "/assets/apps/" + encodeURIComponent(id) + "/app.css";
-      if (!document.querySelector('link[data-secu-app-style="' + id + '"]')) {
-        const style = document.createElement("link"); style.rel = "stylesheet"; style.href = styleHref; style.dataset.secuAppStyle = id; document.head.appendChild(style);
+      let style = document.querySelector('link[data-secu-app-style="' + id + '"]');
+      if (!style) {
+        style = document.createElement("link");
+        style.rel = "stylesheet";
+        style.href = styleHref;
+        style.dataset.secuAppStyle = id;
+        document.head.appendChild(style);
+        await new Promise(resolve => {
+          style.addEventListener("load", resolve, { once: true });
+          style.addEventListener("error", resolve, { once: true });
+        });
       }
       const appModule = await import("/assets/apps/" + encodeURIComponent(id) + "/app.js");
       if (typeof appModule.open !== "function") throw new Error("The app entry point does not export open().");
@@ -274,183 +283,6 @@
   setInterval(() => {
     if ($("#clockBriefing")?.classList.contains("open")) renderBriefing();
   }, 15000);
-
-  // --------------------------------------------------
-  // GFORT
-  // --------------------------------------------------
-
-  function openGFort() {
-    showApp("gfort", `
-      <div class="gfort-app">
-        <div class="gfort-hero">
-          <i class="ri-gamepad-fill"></i>
-          <h2>GFort</h2>
-          <p>Choose a library platform.</p>
-        </div>
-        <div class="gfort-platforms">
-          <button data-console="PlayStation"><i class="ri-playstation-line"></i><strong>PlayStation</strong><span>Library 01</span></button>
-          <button data-console="Xbox"><i class="ri-xbox-line"></i><strong>Xbox</strong><span>Library 02</span></button>
-          <button data-console="Nintendo"><i class="ri-gamepad-line"></i><strong>Nintendo</strong><span>Library 03</span></button>
-        </div>
-        <p class="integration-note">These are library selectors only. Game libraries will be connected later.</p>
-      </div>
-    `, {
-      afterRender: () => {
-        $$("[data-console]").forEach(button => {
-          button.addEventListener("click", () => {
-            $$("[data-console]").forEach(item => item.classList.remove("active"));
-            button.classList.add("active");
-            notify("Library selected", `${button.dataset.console} library selected.`);
-          });
-        });
-      }
-    });
-  }
-
-  // --------------------------------------------------
-  // SCAR
-  // --------------------------------------------------
-
-  function openScar() {
-    showApp("scar", `
-      <div class="integration-app scar-app">
-        <div class="integration-logo"><i class="ri-sparkling-2-line"></i></div>
-        <h2>Scar</h2>
-        <p class="integration-status"><span class="status-dot offline"></span> AI provider not connected</p>
-        <div class="integration-details">
-          <strong>AI workspace</strong>
-          <p>The chat interface is reserved for the future AI service. Site-wide read and write permissions are not enabled in this build.</p>
-          <p>When connected, changes will need explicit user approval before they are applied.</p>
-        </div>
-      </div>
-    `);
-  }
-
-  // --------------------------------------------------
-  // MAIL
-  // --------------------------------------------------
-
-  function openMail() {
-    const drafts = readJSON(mailKey, []);
-
-    showApp("mail", `
-      <div class="mail-app">
-        <aside class="mail-sidebar">
-          <button class="active"><i class="ri-draft-line"></i> Drafts</button>
-          <button disabled><i class="ri-inbox-line"></i> Inbox</button>
-          <button disabled><i class="ri-send-plane-line"></i> Sent</button>
-        </aside>
-        <section class="mail-main">
-          <div class="app-toolbar">
-            <div><h2>Mail</h2><p>Local draft workspace.</p></div>
-            <button class="primary-button" id="mailNew"><i class="ri-edit-line"></i> New draft</button>
-          </div>
-          <div class="mail-drafts" id="mailDrafts">
-            ${drafts.length ? drafts.map(draft => `
-              <button data-draft-id="${draft.id}">
-                <strong>${escapeHTML(draft.subject || "(No subject)")}</strong>
-                <span>${escapeHTML(draft.to || "No recipient")}</span>
-              </button>
-            `).join("") : `<div class="app-empty"><i class="ri-mail-line"></i><strong>No drafts yet</strong><span>Create a draft to get started.</span></div>`}
-          </div>
-          <form class="mail-compose" id="mailCompose" hidden>
-            <label>To<input id="mailTo" type="email" placeholder="name@example.com"></label>
-            <label>Subject<input id="mailSubject" placeholder="Subject"></label>
-            <label>Message<textarea id="mailBody" rows="7" placeholder="Write your message..."></textarea></label>
-            <div><button type="submit" class="primary-button">Save draft</button><button type="button" id="mailCancel">Cancel</button></div>
-            <p class="integration-note">Drafts are saved locally. Sending email is not connected.</p>
-          </form>
-        </section>
-      </div>
-    `, {
-      afterRender: () => {
-        const form = $("#mailCompose");
-
-        $("#mailNew").addEventListener("click", () => {
-          form.hidden = false;
-          $("#mailTo").value = "";
-          $("#mailSubject").value = "";
-          $("#mailBody").value = "";
-        });
-
-        $("#mailCancel").addEventListener("click", () => form.hidden = true);
-
-        form.addEventListener("submit", event => {
-          event.preventDefault();
-
-          const current = readJSON(mailKey, []);
-          current.unshift({
-            id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()),
-            to: $("#mailTo").value.trim(),
-            subject: $("#mailSubject").value.trim(),
-            body: $("#mailBody").value,
-            updatedAt: Date.now()
-          });
-
-          writeJSON(mailKey, current);
-          openMail();
-          notify("Draft saved", "Your email draft is stored locally.");
-        });
-
-        $$("[data-draft-id]").forEach(button => {
-          button.addEventListener("click", () => {
-            const draft = readJSON(mailKey, []).find(item => item.id === button.dataset.draftId);
-            if (!draft) return;
-
-            form.hidden = false;
-            $("#mailTo").value = draft.to;
-            $("#mailSubject").value = draft.subject;
-            $("#mailBody").value = draft.body;
-          });
-        });
-      }
-    });
-  }
-
-  // --------------------------------------------------
-  // CHAT
-  // --------------------------------------------------
-
-  function openChat() {
-    const messages = readJSON(chatKey, []);
-
-    showApp("chat", `
-      <div class="chat-app">
-        <div class="chat-heading"><i class="ri-message-3-line"></i><div><strong>SecuOS Chat</strong><span>Local workspace</span></div></div>
-        <div class="chat-messages" id="chatMessages">
-          ${messages.map(message => `
-            <div class="chat-message ${message.role === "user" ? "mine" : ""}">
-              <span>${escapeHTML(message.role === "user" ? "You" : "SecuOS")}</span>
-              <p>${escapeHTML(message.text)}</p>
-            </div>
-          `).join("")}
-          ${messages.length ? "" : `<div class="app-empty"><i class="ri-chat-3-line"></i><strong>Start a conversation</strong><span>Messages are saved in this browser only.</span></div>`}
-        </div>
-        <form class="chat-compose" id="chatForm">
-          <input id="chatInput" placeholder="Write a message..." autocomplete="off">
-          <button type="submit" aria-label="Send"><i class="ri-send-plane-fill"></i></button>
-        </form>
-      </div>
-    `, {
-      afterRender: () => {
-        $("#chatForm").addEventListener("submit", event => {
-          event.preventDefault();
-
-          const input = $("#chatInput");
-          const text = input.value.trim();
-          if (!text) return;
-
-          const current = readJSON(chatKey, []);
-          current.push({ role: "user", text, time: Date.now() });
-          writeJSON(chatKey, current);
-          openChat();
-        });
-
-        const list = $("#chatMessages");
-        list.scrollTop = list.scrollHeight;
-      }
-    });
-  }
 
   // --------------------------------------------------
   // WEATHER
