@@ -1,4 +1,7 @@
 export async function open() {
-  if (typeof window.openSecuSettings !== "function") throw new Error("Settings service is unavailable.");
-  window.openSecuSettings();
+  const manager = window.SecuWindowManager;
+  if (typeof manager?.openWindow !== "function") {
+    throw new Error("The Settings window manager is unavailable.");
+  }
+  manager.openWindow("settingsWindow");
 }

@@ -14,7 +14,8 @@ export async function open(){
     const closeHandler=event=>{
       if(!event.target.closest("[data-window-close]"))return;
       stop();
-      video.srcObject=null;
+      const activeVideo=appWindow.querySelector("#cameraVideo");
+      if(activeVideo) activeVideo.srcObject=null;
       appWindow.removeEventListener("click",closeHandler);
     };
     appWindow.addEventListener("click",closeHandler);
