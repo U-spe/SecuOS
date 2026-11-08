@@ -635,3 +635,8 @@
 .secu-setup-back{margin-top:10px;background:rgba(255,255,255,.08)}
 .secu-boot-content:has(.secu-setup-section){width:min(760px,calc(100vw - 32px));max-height:calc(100vh - 30px);overflow:auto;padding:12px 0}
 @media(max-width:560px){.secu-setup-grid{grid-template-columns:1fr}.secu-setup-wallpapers{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+.secu-setup-presets{grid-template-columns:repeat(2,minmax(0,1fr))}
+.secu-setup-upload{display:block;padding:13px;border:1px dashed rgba(255,255,255,.25);border-radius:10px;color:#fff;text-align:center;cursor:pointer}
+.secu-setup-upload input{display:none}
+.secu-setup-help{display:block;margin-top:8px;color:rgba(255,255,255,.6)}

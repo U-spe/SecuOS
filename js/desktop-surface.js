@@ -273,6 +273,15 @@
     });
   }
 
+  window.addEventListener("click", event => {
+    const icon = event.target.closest(".desktop-icon[data-app]");
+    if (icon?.dataset.justDragged === "true") {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      delete icon.dataset.justDragged;
+    }
+  }, true);
+
   // --------------------------------------------------
   // COMPLETE DESKTOP REFRESH
   // --------------------------------------------------

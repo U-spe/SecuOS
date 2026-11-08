@@ -338,7 +338,8 @@ function renderSetup() {
         os: storageGet(STORAGE.os, "chrome"),
         theme: storageGet("secuos-theme", "dark"),
         accent: storageGet("secuos-accent", "#7257ff"),
-        wallpaper: storageGet("secuos-wallpaper", "nebula")
+        wallpaper: storageGet("secuos-wallpaper", "nebula"),
+        font: storageGet("secuos-font", "space")
     };
     const wallpaperStyles = {
         nebula: "radial-gradient(ellipse at 30% 25%, #542c88, #171126 45%, #09090d 85%)",
@@ -357,13 +358,19 @@ function renderSetup() {
         localStorage.setItem("secuos-theme", choices.theme);
         localStorage.setItem("secuos-accent", choices.accent);
         localStorage.setItem("secuos-wallpaper", choices.wallpaper);
+        localStorage.setItem("secuos-font", choices.font);
         localStorage.setItem(CONFIG.settingsKey, JSON.stringify(choices));
         document.documentElement.dataset.os = choices.os;
         document.documentElement.dataset.theme = choices.theme;
         document.documentElement.style.setProperty("--accent", choices.accent);
+        const fonts = { space: '"Space Grotesk", sans-serif', inter: '"Inter", sans-serif', nunito: '"Nunito", sans-serif', orbitron: '"Orbitron", sans-serif', mono: '"JetBrains Mono", monospace', system: "system-ui, sans-serif" };
+        document.body.style.fontFamily = fonts[choices.font] || fonts.space;
         const bg = wallpaperStyles[choices.wallpaper] || wallpaperStyles.nebula;
         const desktopWallpaper = document.querySelector(".wallpaper");
-        if (desktopWallpaper) desktopWallpaper.style.background = bg;
+        if (desktopWallpaper) {
+            if (choices.wallpaper.startsWith("data:image/")) desktopWallpaper.style.backgroundImage = "url(" + JSON.stringify(choices.wallpaper) + ")";
+            else desktopWallpaper.style.background = bg;
+        }
     };
     const renderPreferences = () => {
         render(`
@@ -399,6 +406,26 @@ function renderSetup() {
                     ${Object.entries(wallpaperStyles).map(([name,background])=>`<button class="secu-setup-card ${choices.wallpaper===name?"selected":""}" data-wallpaper-choice="${name}"><span class="secu-setup-wallpaper" style="background:${background}"></span><strong>${name[0].toUpperCase()+name.slice(1)}</strong></button>`).join("")}
                 </div>
             </div>
+            <div class="secu-setup-section">
+                <h2>Typography</h2>
+                <select class="secu-boot-field" id="secuSetupFont">
+                    <option value="space">Space Grotesk</option><option value="inter">Inter</option><option value="nunito">Nunito</option><option value="orbitron">Orbitron</option><option value="mono">JetBrains Mono</option><option value="system">System Default</option>
+                </select>
+            </div>
+            <div class="secu-setup-section">
+                <h2>Presets</h2>
+                <div class="secu-setup-grid secu-setup-presets">
+                    <button class="secu-setup-card" data-preset="ubg"><strong>◈ UBG Vibes</strong><small>Dark / Purple / Space</small></button>
+                    <button class="secu-setup-card" data-preset="minimal"><strong>◻ Minimal</strong><small>Light / Blue / Inter</small></button>
+                    <button class="secu-setup-card" data-preset="neon"><strong>✳ Neon</strong><small>Dark / Green / Orbitron</small></button>
+                    <button class="secu-setup-card" data-preset="classic"><strong>▦ Classic</strong><small>Dark / Blue / Nunito</small></button>
+                </div>
+            </div>
+            <div class="secu-setup-section">
+                <h2>Custom background</h2>
+                <label class="secu-setup-upload">＋ Upload your own background<input type="file" id="secuSetupWallpaper" accept="image/*"></label>
+                <small class="secu-setup-help">Images are stored locally in this browser.</small>
+            </div>
             <div class="secu-setup-actions"><button class="secu-boot-button" id="secu-setup-continue">Continue →</button></div>
             ${footer()}
         `);
@@ -407,6 +434,20 @@ function renderSetup() {
         document.querySelectorAll("[data-accent-choice]").forEach(button=>button.addEventListener("click",()=>{choices.accent=button.dataset.accentChoice;persist();renderPreferences();}));
         document.querySelectorAll("[data-wallpaper-choice]").forEach(button=>button.addEventListener("click",()=>{choices.wallpaper=button.dataset.wallpaperChoice;persist();renderPreferences();}));
         document.getElementById("secuSetupColor")?.addEventListener("input",event=>{choices.accent=event.target.value;persist();});
+        const fontSelect=document.getElementById("secuSetupFont");
+        if(fontSelect){fontSelect.value=choices.font;fontSelect.addEventListener("change",event=>{choices.font=event.target.value;persist();});}
+        document.querySelectorAll("[data-preset]").forEach(button=>button.addEventListener("click",()=>{
+            const preset=presets[button.dataset.preset];if(!preset)return;
+            Object.assign(choices,preset,{font:button.dataset.preset==="minimal"?"inter":button.dataset.preset==="neon"?"orbitron":button.dataset.preset==="classic"?"nunito":"space"});
+            persist();renderPreferences();
+        }));
+        document.getElementById("secuSetupWallpaper")?.addEventListener("change",event=>{
+            const file=event.target.files?.[0];if(!file||!file.type.startsWith("image/"))return;
+            if(file.size>2*1024*1024){const hint=state.root.querySelector(".secu-setup-help");if(hint)hint.textContent="Choose an image under 2 MB.";return;}
+            const reader=new FileReader();
+            reader.onload=()=>{if(typeof reader.result!=="string")return;choices.wallpaper=reader.result;persist();};
+            reader.readAsDataURL(file);
+        });
         document.getElementById("secu-setup-continue").addEventListener("click",renderProfileForm);
         persist();
     };
