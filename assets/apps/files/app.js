@@ -1,8 +1,4 @@
-export async function open(options = {}) {
-  const handlers = window.SecuOSLegacyAppHandlers;
-  const handler = handlers && handlers["files"];
-  if (typeof handler !== "function") {
-    throw new Error("The Files system service is unavailable.");
-  }
-  return handler(options);
+export async function open() {
+  if (!window.SecuFileSystem?.renderFiles) throw new Error("Files service is unavailable.");
+  await window.SecuFileSystem.renderFiles();
 }

@@ -1,1 +1,1 @@
-/* Clock app-specific styles. Shared application styles remain in /css/apps.css. */
+.clock-app{display:flex;min-height:350px;flex-direction:column;align-items:center;justify-content:center;gap:12px}.clock-app-time{font-size:clamp(48px,9vw,82px);font-weight:300;letter-spacing:-3px;font-variant-numeric:tabular-nums}.clock-app-date,.clock-app-note{color:var(--desktop-muted);font-size:13px}
