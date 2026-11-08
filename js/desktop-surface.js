@@ -211,6 +211,7 @@
     renderWindowsDesktop(apps);
     renderMacDock(apps);
     renderChromeDesktop(apps);
+    enableDesktopIconDragging();
     renderSearchResults(searchInput?.value || "");
 
     document.dispatchEvent(

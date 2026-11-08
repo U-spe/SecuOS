@@ -298,7 +298,7 @@ function playIntroVideo() {
             true
         );
 
-        video.play().catch(finish);
+        video.play().catch(() => {\n            const hint = container.querySelector(".secu-boot-skip-hint");\n            if (hint) hint.textContent = "Press Enter twice to skip";\n        });
     });
 }
 
@@ -330,90 +330,115 @@ function renderSetup() {
     state.kernel.transition("setup");
     state.root.dataset.os = getOS();
 
-    render(`
-        ${logo()}
-
-        <h1 class="secu-boot-title">
-            Create your profile
-        </h1>
-
-        <p class="secu-boot-description">
-            Set up your SecuOS account.
-        </p>
-
-        <input
-            class="secu-boot-field"
-            id="secu-display-name"
-            placeholder="Display name"
-            maxlength="40"
-        >
-
-        <input
-            class="secu-boot-field"
-            id="secu-username"
-            placeholder="Username"
-            maxlength="24"
-        >
-
-        <input
-            class="secu-boot-field"
-            id="secu-password"
-            type="password"
-            placeholder="Password (optional)"
-        >
-
-        <p class="secu-boot-error" id="secu-setup-error"></p>
-
-        <button class="secu-boot-button" id="secu-create-profile">
-            Create profile
-        </button>
-
-        ${footer()}
-    `);
-
-    const submit = async () => {
-        const button = document.getElementById(
-            "secu-create-profile"
-        );
-
-        const error = document.getElementById(
-            "secu-setup-error"
-        );
-
-        button.disabled = true;
-        error.textContent = "";
-
-        try {
-            state.profile = await createProfile({
-                displayName: document.getElementById(
-                    "secu-display-name"
-                ).value,
-                username: document.getElementById(
-                    "secu-username"
-                ).value,
-                password: document.getElementById(
-                    "secu-password"
-                ).value
-            });
-
-            renderWelcome();
-        } catch (exception) {
-            error.textContent = exception.message;
-            button.disabled = false;
-        }
+    const choices = {
+        os: storageGet(STORAGE.os, "chrome"),
+        theme: storageGet("secuos-theme", "dark"),
+        accent: storageGet("secuos-accent", "#7257ff"),
+        wallpaper: storageGet("secuos-wallpaper", "nebula")
     };
-
-    document.getElementById(
-        "secu-create-profile"
-    ).addEventListener("click", submit);
-
-    document.getElementById(
-        "secu-password"
-    ).addEventListener("keydown", event => {
-        if (event.key === "Enter") submit();
-    });
+    const wallpaperStyles = {
+        nebula: "radial-gradient(ellipse at 30% 25%, #542c88, #171126 45%, #09090d 85%)",
+        midnight: "linear-gradient(135deg, #05070f, #152a50, #08090f)",
+        aurora: "radial-gradient(ellipse at 70% 20%, #28c9a0, #123c55, #08090f)",
+        sunset: "linear-gradient(140deg, #ff9a70, #8549b8, #19152e)"
+    };
+    const presets = {
+        ubg: { theme: "dark", accent: "#7257ff", wallpaper: "nebula" },
+        minimal: { theme: "light", accent: "#388bff", wallpaper: "midnight" },
+        neon: { theme: "dark", accent: "#13b98a", wallpaper: "aurora" },
+        classic: { theme: "dark", accent: "#388bff", wallpaper: "midnight" }
+    };
+    const persist = () => {
+        localStorage.setItem(STORAGE.os, choices.os);
+        localStorage.setItem("secuos-theme", choices.theme);
+        localStorage.setItem("secuos-accent", choices.accent);
+        localStorage.setItem("secuos-wallpaper", choices.wallpaper);
+        localStorage.setItem(CONFIG.settingsKey, JSON.stringify(choices));
+        document.documentElement.dataset.os = choices.os;
+        document.documentElement.dataset.theme = choices.theme;
+        document.documentElement.style.setProperty("--accent", choices.accent);
+        const bg = wallpaperStyles[choices.wallpaper] || wallpaperStyles.nebula;
+        const desktopWallpaper = document.querySelector(".wallpaper");
+        if (desktopWallpaper) desktopWallpaper.style.background = bg;
+    };
+    const renderPreferences = () => {
+        render(`
+            ${logo()}
+            <div class="secu-setup-eyebrow">STEP 01 / PERSONALIZATION</div>
+            <h1 class="secu-boot-title">Make SecuOS yours.</h1>
+            <p class="secu-boot-description">Choose your desktop style and look. You can change all of this later in Settings.</p>
+            <div class="secu-setup-section">
+                <h2>Choose your OS</h2>
+                <div class="secu-setup-grid secu-setup-os">
+                    <button class="secu-setup-card ${choices.os==="chrome"?"selected":""}" data-os-choice="chrome"><b>◉</b><strong>ChromeOS</strong><small>Clean, simple, minimal.</small></button>
+                    <button class="secu-setup-card ${choices.os==="windows"?"selected":""}" data-os-choice="windows"><b>⊞</b><strong>Windows</strong><small>Modern and familiar.</small></button>
+                    <button class="secu-setup-card ${choices.os==="macos"?"selected":""}" data-os-choice="macos"><b>●</b><strong>macOS</strong><small>Sleek and elegant.</small></button>
+                </div>
+            </div>
+            <div class="secu-setup-section">
+                <h2>Appearance</h2>
+                <div class="secu-setup-grid secu-setup-theme">
+                    <button class="secu-setup-card ${choices.theme==="dark"?"selected":""}" data-theme-choice="dark"><strong>Night Mode</strong><small>Dark surfaces</small></button>
+                    <button class="secu-setup-card ${choices.theme==="light"?"selected":""}" data-theme-choice="light"><strong>Day Mode</strong><small>Light surfaces</small></button>
+                </div>
+            </div>
+            <div class="secu-setup-section">
+                <h2>Accent color</h2>
+                <div class="secu-setup-colors">
+                    ${["#7257ff","#388bff","#13b98a","#ff6584","#f2a93b"].map(color=>`<button class="secu-setup-swatch ${choices.accent===color?"selected":""}" style="--swatch:${color}" data-accent-choice="${color}" aria-label="Accent ${color}"></button>`).join("")}
+                    <label class="secu-setup-custom"><input type="color" id="secuSetupColor" value="${choices.accent}"><span>＋</span></label>
+                </div>
+            </div>
+            <div class="secu-setup-section">
+                <h2>Background</h2>
+                <div class="secu-setup-grid secu-setup-wallpapers">
+                    ${Object.entries(wallpaperStyles).map(([name,background])=>`<button class="secu-setup-card ${choices.wallpaper===name?"selected":""}" data-wallpaper-choice="${name}"><span class="secu-setup-wallpaper" style="background:${background}"></span><strong>${name[0].toUpperCase()+name.slice(1)}</strong></button>`).join("")}
+                </div>
+            </div>
+            <div class="secu-setup-actions"><button class="secu-boot-button" id="secu-setup-continue">Continue →</button></div>
+            ${footer()}
+        `);
+        document.querySelectorAll("[data-os-choice]").forEach(button=>button.addEventListener("click",()=>{choices.os=button.dataset.osChoice;persist();renderPreferences();}));
+        document.querySelectorAll("[data-theme-choice]").forEach(button=>button.addEventListener("click",()=>{choices.theme=button.dataset.themeChoice;persist();renderPreferences();}));
+        document.querySelectorAll("[data-accent-choice]").forEach(button=>button.addEventListener("click",()=>{choices.accent=button.dataset.accentChoice;persist();renderPreferences();}));
+        document.querySelectorAll("[data-wallpaper-choice]").forEach(button=>button.addEventListener("click",()=>{choices.wallpaper=button.dataset.wallpaperChoice;persist();renderPreferences();}));
+        document.getElementById("secuSetupColor")?.addEventListener("input",event=>{choices.accent=event.target.value;persist();});
+        document.getElementById("secu-setup-continue").addEventListener("click",renderProfileForm);
+        persist();
+    };
+    const renderProfileForm = () => {
+        render(`
+            ${logo()}
+            <div class="secu-setup-eyebrow">STEP 02 / YOUR PROFILE</div>
+            <h1 class="secu-boot-title">Create your profile</h1>
+            <p class="secu-boot-description">Your SecuOS preferences are saved. Now create your local profile.</p>
+            <input class="secu-boot-field" id="secu-display-name" placeholder="Display name" maxlength="40">
+            <input class="secu-boot-field" id="secu-username" placeholder="Username" maxlength="24">
+            <input class="secu-boot-field" id="secu-password" type="password" placeholder="Password (optional)">
+            <p class="secu-boot-error" id="secu-setup-error"></p>
+            <button class="secu-boot-button" id="secu-create-profile">Create profile</button>
+            <button class="secu-boot-button secu-setup-back" id="secu-setup-back">← Back to personalization</button>
+            ${footer()}
+        `);
+        const submit = async () => {
+            const button=document.getElementById("secu-create-profile");
+            const error=document.getElementById("secu-setup-error");
+            button.disabled=true; error.textContent="";
+            try {
+                state.profile=await createProfile({
+                    displayName:document.getElementById("secu-display-name").value,
+                    username:document.getElementById("secu-username").value,
+                    password:document.getElementById("secu-password").value
+                });
+                renderWelcome();
+            } catch(exception) { error.textContent=exception.message; button.disabled=false; }
+        };
+        document.getElementById("secu-create-profile").addEventListener("click",submit);
+        document.getElementById("secu-password").addEventListener("keydown",event=>{if(event.key==="Enter"&&!event.repeat)submit();});
+        document.getElementById("secu-setup-back").addEventListener("click",renderPreferences);
+    };
+    renderPreferences();
 }
-
 /* ================================================
    OS-SPECIFIC LOGIN
 ================================================ */
