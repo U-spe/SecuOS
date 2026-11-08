@@ -238,6 +238,25 @@
   document.querySelectorAll("[data-preset]").forEach(button => button.addEventListener("click", () => applyPreset(button.dataset.preset)));
   document.getElementById("fontSelect")?.addEventListener("change", event => setFont(event.target.value));
   document.getElementById("accentPicker")?.addEventListener("input", event => setAccent(event.target.value));
+  document.getElementById("wallpaperFromFiles")?.addEventListener("click", async () => {
+    try {
+      const item = await window.SecuFileSystem?.pickFile?.({ accept: "image/*" });
+      if (!item) return;
+      if (!item.blob || !item.type?.startsWith("image/")) throw new Error("Choose an image file.");
+      if (item.size > 2 * 1024 * 1024) throw new Error("Choose an image under 2 MB.");
+      const reader = new FileReader();
+      reader.onload = () => {
+        if (typeof reader.result === "string" && reader.result.startsWith("data:image/")) {
+          setWallpaper(reader.result);
+          window.SecuDesktop?.notify("Wallpaper updated", "Your Files image is now your desktop background.");
+        }
+      };
+      reader.onerror = () => window.SecuDesktop?.notify("Wallpaper error", "The selected image could not be read.");
+      reader.readAsDataURL(item.blob);
+    } catch (error) {
+      window.SecuDesktop?.notify("Could not choose wallpaper", error.message);
+    }
+  });
   document.getElementById("wallpaperUpload")?.addEventListener("change", event => {
     const file = event.target.files?.[0];
     if (!file || !file.type.startsWith("image/")) return;
