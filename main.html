@@ -312,6 +312,10 @@
         <div class="settings-main">
           <section class="settings-page active" data-page="appearance">
             <h2>Appearance</h2><p>Make your desktop feel like home.</p>
+            <div class="settings-toolbar">
+              <label class="settings-search-wrap"><i class="ri-search-line"></i><input id="settingsSearch" type="search" placeholder="Search settings..." autocomplete="off"></label>
+              <span class="settings-save-note"><i class="ri-check-line"></i> Changes save automatically</span>
+            </div>
             <h3>Desktop style</h3>
             <div class="os-picker">
               <button data-set-os="windows" class="os-choice active"><i class="ri-windows-fill"></i><span>Windows 11</span></button>
@@ -334,6 +338,7 @@
             </div>
             <label class="upload-wallpaper">＋ Upload your own background<input type="file" id="wallpaperUpload" accept="image/*"></label>
             <button class="primary-button" id="wallpaperFromFiles"><i class="ri-folder-image-line"></i> Choose image from Files</button>
+            <button class="settings-reset-button" id="resetAppearance" type="button"><i class="ri-refresh-line"></i> Reset appearance</button>
           </section>
 
           <section class="settings-page" data-page="personalization">

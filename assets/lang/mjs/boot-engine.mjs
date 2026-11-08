@@ -222,86 +222,97 @@ async function loadKernel() {
 function playIntroVideo() {
     return new Promise(resolve => {
         showOverlay();
-
         state.root.classList.add("secu-boot-intro");
 
-        const container = state.root.querySelector(
-            ".secu-boot-content"
-        );
-
+        const container = state.root.querySelector(".secu-boot-content");
         container.innerHTML = `
-            <video
-                class="secu-boot-video"
-                src="/assets/graphics/v/intro.mp4"
-                autoplay
-                muted
-                playsinline
-                preload="auto"
-            ></video>
-
-            <div class="secu-boot-skip-hint">
-                Double-press Enter to skip
+            <video class="secu-boot-video" autoplay muted playsinline preload="auto">
+                <source src="/assets/graphics/v/intro.mp4" type="video/mp4">
+            </video>
+            <div class="secu-boot-video-fallback" id="secuBootVideoFallback" hidden>
+                <p id="secuBootVideoMessage">The intro video could not start.</p>
+                <div class="secu-boot-video-actions">
+                    <button type="button" id="secuBootVideoPlay">Play video</button>
+                    <button type="button" id="secuBootVideoSkip">Skip intro</button>
+                </div>
             </div>
+            <div class="secu-boot-skip-hint">Double-press Enter to skip</div>
         `;
 
         const video = container.querySelector("video");
-
+        const fallbackPanel = container.querySelector("#secuBootVideoFallback");
+        const fallbackMessage = container.querySelector("#secuBootVideoMessage");
+        const playButton = container.querySelector("#secuBootVideoPlay");
+        const skipButton = container.querySelector("#secuBootVideoSkip");
         let finished = false;
         let lastEnter = 0;
+        let loadWatchdog;
+
+        const cleanup = () => {
+            clearTimeout(loadWatchdog);
+            document.removeEventListener("keydown", onKeyDown, true);
+            video.removeEventListener("ended", finish);
+            video.removeEventListener("error", onMediaError);
+            video.removeEventListener("playing", onPlaying);
+            playButton.removeEventListener("click", retryPlayback);
+            skipButton.removeEventListener("click", finish);
+        };
 
         const finish = () => {
             if (finished) return;
-
             finished = true;
-
-            clearTimeout(fallback);
-
-            document.removeEventListener(
-                "keydown",
-                onKeyDown,
-                true
-            );
-
+            cleanup();
             state.root?.classList.remove("secu-boot-intro");
-
             resolve();
+        };
+
+        const showFallback = message => {
+            fallbackMessage.textContent = message;
+            fallbackPanel.hidden = false;
+        };
+
+        const onPlaying = () => {
+            clearTimeout(loadWatchdog);
+            fallbackPanel.hidden = true;
+        };
+
+        const onMediaError = () => {
+            showFallback("The intro video could not be loaded. You can retry or skip it.");
+        };
+
+        const retryPlayback = () => {
+            video.muted = true;
+            video.play().then(onPlaying).catch(() => {
+                showFallback("Playback is blocked by the browser. Try again or skip the intro.");
+            });
         };
 
         const onKeyDown = event => {
             if (event.code !== "Enter" || event.repeat) return;
-
             event.preventDefault();
             event.stopPropagation();
             event.stopImmediatePropagation();
-
             const now = Date.now();
-
-            if (lastEnter && now - lastEnter <= 900) {
-                finish();
-            } else {
-                lastEnter = now;
-            }
+            if (lastEnter && now - lastEnter <= 900) finish();
+            else lastEnter = now;
         };
 
-        const fallback = setTimeout(finish, 7600);
+        video.addEventListener("ended", finish);
+        video.addEventListener("error", onMediaError);
+        video.addEventListener("playing", onPlaying);
+        playButton.addEventListener("click", retryPlayback);
+        skipButton.addEventListener("click", finish);
+        document.addEventListener("keydown", onKeyDown, true);
 
-        video.addEventListener("ended", finish, {
-            once: true
-        });
+        loadWatchdog = setTimeout(() => {
+            if (video.readyState < HTMLMediaElement.HAVE_CURRENT_DATA) {
+                showFallback("The intro is taking too long to load. You can retry or skip it.");
+            }
+        }, 12000);
 
-        video.addEventListener("error", finish, {
-            once: true
-        });
-
-        document.addEventListener(
-            "keydown",
-            onKeyDown,
-            true
-        );
-
-        video.play().catch(() => {
-            const hint = container.querySelector(".secu-boot-skip-hint");
-            if (hint) hint.textContent = "Press Enter twice to skip";
+        video.load();
+        video.play().then(onPlaying).catch(() => {
+            showFallback("The browser did not start the intro automatically. Press Play video to try again.");
         });
     });
 }

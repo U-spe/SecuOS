@@ -249,3 +249,17 @@
 .wallpaper-picker button.active{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
 
 .wallpaper-sunset-preview{display:block;width:100%;height:75px;border-radius:5px;background:linear-gradient(140deg,#ff9a70,#8549b8,#19152e)}
+
+
+/* Settings refinement */
+.settings-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:18px 0 22px;padding:12px;border:1px solid var(--panel-border);border-radius:12px;background:rgba(128,128,128,.07)}
+.settings-search-wrap{display:flex!important;flex-direction:row!important;align-items:center!important;gap:9px!important;min-width:min(260px,100%);margin:0!important;padding:0!important;color:var(--desktop-muted)}
+.settings-search-wrap input{width:min(310px,100%);padding:9px 11px;border:1px solid var(--panel-border);border-radius:8px;background:rgba(128,128,128,.1);color:inherit;outline:none}
+.settings-search-wrap input:focus{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 18%,transparent)}
+.settings-save-note{display:inline-flex;align-items:center;gap:6px;color:var(--desktop-muted);font-size:11px}
+.settings-save-note i{color:#36b37e}
+.settings-reset-button{display:flex;align-items:center;gap:8px;margin-top:16px;padding:10px 13px;border:1px solid var(--panel-border);border-radius:8px;background:rgba(128,128,128,.08);color:inherit;cursor:pointer}
+.settings-reset-button:hover{border-color:var(--accent);background:rgba(128,128,128,.14)}
+.settings-nav:focus-visible,.os-choice:focus-visible,.theme-picker button:focus-visible,.wallpaper-picker button:focus-visible,.secu-settings-presets button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.settings-page input[type=color]{width:54px;height:38px;padding:3px;border:1px solid var(--panel-border);border-radius:8px;background:transparent;cursor:pointer}
+@media(max-width:680px){.settings-content{grid-template-columns:1fr;grid-template-rows:auto minmax(0,1fr)}.settings-sidebar{display:flex;gap:6px;overflow-x:auto;padding:8px;border-right:0;border-bottom:1px solid var(--panel-border)}.settings-profile{display:none}.settings-nav{width:auto;min-width:max-content;margin:0;padding:9px 11px}.settings-nav.active{box-shadow:inset 0 -3px var(--accent)}.settings-main{padding:18px}.os-picker{grid-template-columns:1fr}.wallpaper-picker{grid-template-columns:repeat(2,minmax(0,1fr))}}
