@@ -199,6 +199,80 @@
     renderChromeShelf(apps);
   }
 
+
+  // Desktop shortcuts are draggable and persist independently for each OS style.
+  const iconLayoutKey = () => "secuos-desktop-layout-" + currentOS();
+  function readIconLayout() {
+    try { return JSON.parse(localStorage.getItem(iconLayoutKey()) || "{}"); }
+    catch { return {}; }
+  }
+  function saveIconLayout(layout) {
+    try { localStorage.setItem(iconLayoutKey(), JSON.stringify(layout)); }
+    catch (error) { console.warn("[SecuOS] Could not save icon layout.", error); }
+  }
+  function enableDesktopIconDragging() {
+    const os = currentOS();
+    const container = os === "windows"
+      ? $(".windows-layer .desktop-shortcuts")
+      : os === "macos"
+        ? $(".macos-layer .mac-shortcuts")
+        : $(".chrome-layer .chrome-shortcuts");
+    if (!container) return;
+    container.style.position = "absolute";
+    container.style.display = "block";
+    container.style.inset = "18px 16px 70px 16px";
+    container.style.width = "auto";
+    container.style.height = "auto";
+    container.style.overflow = "hidden";
+    container.style.gridAutoFlow = "initial";
+    container.style.gridTemplateRows = "none";
+    const layout = readIconLayout();
+    container.querySelectorAll(".desktop-icon").forEach((icon, index) => {
+      const id = icon.dataset.app;
+      const saved = layout[id];
+      icon.style.position = "absolute";
+      icon.style.left = saved ? saved.x + "px" : (Math.floor(index / 6) * 92) + "px";
+      icon.style.top = saved ? saved.y + "px" : ((index % 6) * 94) + "px";
+      icon.style.touchAction = "none";
+      let startX=0,startY=0,originX=0,originY=0,moved=false,dragging=false;
+      icon.addEventListener("pointerdown", event => {
+        if (event.button !== 0) return;
+        dragging=true; moved=false;
+        startX=event.clientX; startY=event.clientY;
+        originX=parseFloat(icon.style.left)||0;
+        originY=parseFloat(icon.style.top)||0;
+        icon.setPointerCapture(event.pointerId);
+      });
+      icon.addEventListener("pointermove", event => {
+        if (!dragging) return;
+        const dx=event.clientX-startX, dy=event.clientY-startY;
+        if (!moved && Math.hypot(dx,dy)<5) return;
+        moved=true;
+        const maxX=Math.max(0,container.clientWidth-icon.offsetWidth);
+        const maxY=Math.max(0,container.clientHeight-icon.offsetHeight);
+        icon.style.left=Math.max(0,Math.min(maxX,originX+dx))+"px";
+        icon.style.top=Math.max(0,Math.min(maxY,originY+dy))+"px";
+      });
+      const finish=()=>{
+        if(!dragging)return;
+        dragging=false;
+        if(moved){
+          layout[id]={x:Math.round(parseFloat(icon.style.left)||0),y:Math.round(parseFloat(icon.style.top)||0)};
+          saveIconLayout(layout);
+          icon.dataset.justDragged="true";
+        }
+      };
+      icon.addEventListener("pointerup",finish);
+      icon.addEventListener("pointercancel",finish);
+      icon.addEventListener("click",event=>{
+        if(icon.dataset.justDragged==="true"){
+          event.preventDefault(); event.stopImmediatePropagation();
+          delete icon.dataset.justDragged;
+        }
+      },true);
+    });
+  }
+
   // --------------------------------------------------
   // COMPLETE DESKTOP REFRESH
   // --------------------------------------------------

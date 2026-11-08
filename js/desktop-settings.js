@@ -55,6 +55,7 @@
 
     root.dataset.os = os;
     storage.set("os", os);
+    document.querySelectorAll("[data-os]").forEach(button => button.classList.toggle("selected", button.dataset.os === os));
 
     document.querySelectorAll("[data-set-os]").forEach(button => {
       button.classList.toggle(
@@ -82,15 +83,22 @@
     }
 
     storage.set("theme", theme);
+    document.querySelectorAll("[data-theme]").forEach(button => button.classList.toggle("active", button.dataset.theme === theme));
   }
 
   function setWallpaper(path) {
     if (!path || typeof path !== "string") return;
 
-    wallpaper.style.backgroundImage =
-      `linear-gradient(135deg, rgba(12,15,28,.2), rgba(0,0,0,.1)), url("${path}")`;
-
+    const gradients = {
+      nebula: "radial-gradient(ellipse at 30% 25%, #542c88, #171126 45%, #09090d 85%)",
+      midnight: "linear-gradient(135deg, #05070f, #152a50, #08090f)",
+      aurora: "radial-gradient(ellipse at 70% 20%, #28c9a0, #123c55, #08090f)",
+      sunset: "linear-gradient(140deg, #ff9a70, #8549b8, #19152e)"
+    };
+    if (gradients[path]) wallpaper.style.background = gradients[path];
+    else wallpaper.style.backgroundImage = `linear-gradient(135deg, rgba(12,15,28,.2), rgba(0,0,0,.1)), url("${path}")`;
     storage.set("wallpaper", path);
+    document.querySelectorAll("[data-wallpaper]").forEach(button => button.classList.toggle("active", button.dataset.wallpaper === path));
   }
 
   function setFont(font) {\n    const fonts = { space: '"Space Grotesk", sans-serif', inter: '"Inter", sans-serif', nunito: '"Nunito", sans-serif', orbitron: '"Orbitron", sans-serif', mono: '"JetBrains Mono", monospace', system: "system-ui, sans-serif" };\n    if (!fonts[font]) return;\n    root.style.setProperty("--secu-font", fonts[font]);\n    document.body.style.fontFamily = fonts[font];\n    storage.set("font", font);\n    const select = document.getElementById("fontSelect");\n    if (select) select.value = font;\n  }\n\n  function applyPreset(name) {\n    const presets = { ubg: { theme: "dark", accent: "#7257ff", wallpaper: "nebula", font: "space" }, minimal: { theme: "light", accent: "#388bff", wallpaper: "midnight", font: "inter" }, neon: { theme: "dark", accent: "#13b98a", wallpaper: "aurora", font: "orbitron" }, classic: { theme: "dark", accent: "#388bff", wallpaper: "midnight", font: "nunito" } };\n    const preset = presets[name]; if (!preset) return;\n    setTheme(preset.theme); setAccent(preset.accent); setWallpaper(preset.wallpaper); setFont(preset.font);\n  }\n\n  document.querySelectorAll("[data-preset]").forEach(button => button.addEventListener("click", () => applyPreset(button.dataset.preset)));\n  document.getElementById("fontSelect")?.addEventListener("change", event => setFont(event.target.value));\n\n  function setAccent(color) {
@@ -98,6 +106,8 @@
 
     root.style.setProperty("--accent", color);
     storage.set("accent", color);
+    const picker = document.getElementById("accentPicker");
+    if (picker) picker.value = color;
   }
 
   async function chooseProfilePhoto() {
@@ -360,8 +370,9 @@
   function loadSettings() {
     setOS(storage.get("os", "windows"));
     setTheme(storage.get("theme", "dark"));
+    setFont(storage.get("font", "space"));
 
-    const accent = storage.get("accent", "#6688ff");
+    const accent = storage.get("accent", "#7257ff");
     setAccent(accent);
 
     const uploaded = storage.get("wallpaper-upload");

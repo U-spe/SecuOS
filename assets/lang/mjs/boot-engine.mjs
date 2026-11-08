@@ -268,14 +268,15 @@ function playIntroVideo() {
         };
 
         const onKeyDown = event => {
-            if (event.key !== "Enter") return;
+            if (event.code !== "Enter" || event.repeat) return;
 
             event.preventDefault();
             event.stopPropagation();
+            event.stopImmediatePropagation();
 
             const now = Date.now();
 
-            if (now - lastEnter <= 700) {
+            if (lastEnter && now - lastEnter <= 900) {
                 finish();
             } else {
                 lastEnter = now;
