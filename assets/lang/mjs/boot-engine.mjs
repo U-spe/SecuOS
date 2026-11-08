@@ -299,7 +299,10 @@ function playIntroVideo() {
             true
         );
 
-        video.play().catch(() => {\n            const hint = container.querySelector(".secu-boot-skip-hint");\n            if (hint) hint.textContent = "Press Enter twice to skip";\n        });
+        video.play().catch(() => {
+            const hint = container.querySelector(".secu-boot-skip-hint");
+            if (hint) hint.textContent = "Press Enter twice to skip";
+        });
     });
 }
 

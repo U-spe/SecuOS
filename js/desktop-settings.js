@@ -101,7 +101,26 @@
     document.querySelectorAll("[data-wallpaper]").forEach(button => button.classList.toggle("active", button.dataset.wallpaper === path));
   }
 
-  function setFont(font) {\n    const fonts = { space: '"Space Grotesk", sans-serif', inter: '"Inter", sans-serif', nunito: '"Nunito", sans-serif', orbitron: '"Orbitron", sans-serif', mono: '"JetBrains Mono", monospace', system: "system-ui, sans-serif" };\n    if (!fonts[font]) return;\n    root.style.setProperty("--secu-font", fonts[font]);\n    document.body.style.fontFamily = fonts[font];\n    storage.set("font", font);\n    const select = document.getElementById("fontSelect");\n    if (select) select.value = font;\n  }\n\n  function applyPreset(name) {\n    const presets = { ubg: { theme: "dark", accent: "#7257ff", wallpaper: "nebula", font: "space" }, minimal: { theme: "light", accent: "#388bff", wallpaper: "midnight", font: "inter" }, neon: { theme: "dark", accent: "#13b98a", wallpaper: "aurora", font: "orbitron" }, classic: { theme: "dark", accent: "#388bff", wallpaper: "midnight", font: "nunito" } };\n    const preset = presets[name]; if (!preset) return;\n    setTheme(preset.theme); setAccent(preset.accent); setWallpaper(preset.wallpaper); setFont(preset.font);\n  }\n\n  document.querySelectorAll("[data-preset]").forEach(button => button.addEventListener("click", () => applyPreset(button.dataset.preset)));\n  document.getElementById("fontSelect")?.addEventListener("change", event => setFont(event.target.value));\n\n  function setAccent(color) {
+  function setFont(font) {
+    const fonts = { space: '"Space Grotesk", sans-serif', inter: '"Inter", sans-serif', nunito: '"Nunito", sans-serif', orbitron: '"Orbitron", sans-serif', mono: '"JetBrains Mono", monospace', system: "system-ui, sans-serif" };
+    if (!fonts[font]) return;
+    root.style.setProperty("--secu-font", fonts[font]);
+    document.body.style.fontFamily = fonts[font];
+    storage.set("font", font);
+    const select = document.getElementById("fontSelect");
+    if (select) select.value = font;
+  }
+
+  function applyPreset(name) {
+    const presets = { ubg: { theme: "dark", accent: "#7257ff", wallpaper: "nebula", font: "space" }, minimal: { theme: "light", accent: "#388bff", wallpaper: "midnight", font: "inter" }, neon: { theme: "dark", accent: "#13b98a", wallpaper: "aurora", font: "orbitron" }, classic: { theme: "dark", accent: "#388bff", wallpaper: "midnight", font: "nunito" } };
+    const preset = presets[name]; if (!preset) return;
+    setTheme(preset.theme); setAccent(preset.accent); setWallpaper(preset.wallpaper); setFont(preset.font);
+  }
+
+  document.querySelectorAll("[data-preset]").forEach(button => button.addEventListener("click", () => applyPreset(button.dataset.preset)));
+  document.getElementById("fontSelect")?.addEventListener("change", event => setFont(event.target.value));
+
+  function setAccent(color) {
     if (!/^#[0-9a-f]{6}$/i.test(color)) return;
 
     root.style.setProperty("--accent", color);
